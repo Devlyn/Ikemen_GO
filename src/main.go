@@ -558,10 +558,10 @@ Debug Options:
 		fmt.Fprintln(log, "Gamemappings have been updated")
 	}
 	fmt.Println("Gamepad Checks: ")
-	fmt.Println("Controller 1 aanwezig: ", glfw.Joystick1.Present())
-	fmt.Println("Controller 2 aanwezig: ", glfw.Joystick2.Present())
-	fmt.Println("Controller 3 aanwezig: ", glfw.Joystick3.Present())
-	fmt.Println("Controller 4 aanwezig: ", glfw.Joystick4.Present())
+	fmt.Println("Controller 1 present: ", glfw.Joystick1.Present())
+	fmt.Println("Controller 2 present: ", glfw.Joystick2.Present())
+	fmt.Println("Controller 3 present: ", glfw.Joystick3.Present())
+	fmt.Println("Controller 4 present: ", glfw.Joystick4.Present())
 	l := sys.init(tmp.GameWidth, tmp.GameHeight)
 	if err := l.DoFile(tmp.System); err != nil {
 		fmt.Fprintln(log, err)
