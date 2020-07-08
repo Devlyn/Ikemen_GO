@@ -25,7 +25,7 @@ import (
 
 const (
 	MaxSimul        = 32
-	MaxAttachedChar = 2
+	MaxAttachedChar = 4
 	FPS             = 60
 	P1P3Dist        = 25
 	Mp3SampleRate   = 44100
@@ -329,13 +329,14 @@ type System struct {
 }
 
 type Window struct {
-    *glfw.Window
+	*glfw.Window
 	title      string
 	fullscreen bool
 	x, y, w, h int
 }
 
 var firstWindow = true
+
 func (s *System) newWindow(title string, fullscreen bool, w, h int, oldWindow *Window) (*Window, error) {
 	var err error
 	var window, oldW *glfw.Window
@@ -426,7 +427,7 @@ type OverrideCharData struct {
 func (s *System) resetOverrideCharData() {
 	for i := range s.ocd {
 		s.ocd[i] = OverrideCharData{life: 0, lifeMax: 0, power: 0,
-		dizzyPoints: 0, guardPoints: 0, lifeRatio: 1.0, attackRatio: 1.0}
+			dizzyPoints: 0, guardPoints: 0, lifeRatio: 1.0, attackRatio: 1.0}
 	}
 	return
 }
@@ -455,9 +456,8 @@ func (s *System) init(w, h int32) *lua.LState {
 	glfw.WindowHint(glfw.Resizable, glfw.False)
 	glfw.WindowHint(glfw.ContextVersionMajor, 2)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
-
 	s.window, err = sys.newWindow(s.windowTitle, s.fullscreen, int(s.scrrect[2]), int(s.scrrect[3]), nil)
-	
+
 	// Check if the shader selected is currently avalible.
 	if s.postProcessingShader < int32(len(s.externalShaderList))+3 {
 		s.postProcessingShader = 0
@@ -1740,7 +1740,7 @@ func (s *System) fight() (reload bool) {
 	drawDebug := func() {
 		if s.debugDraw && s.debugFont != nil {
 			//Player Info
-			x := (320 - float32(s.gameWidth)) / 2 + 1
+			x := (320-float32(s.gameWidth))/2 + 1
 			y := 240 - float32(s.gameHeight)
 			if statusLFunc != nil {
 				s.debugFont.palfx.setColor(255, 255, 255)
@@ -1765,8 +1765,8 @@ func (s *System) fight() (reload bool) {
 				put(&x, &y, s)
 			}
 			//Data
-			y = float32(s.gameHeight) - float32(s.debugFont.Size[1]) / s.heightScale *
-				(float32(len(listLFunc)) + float32(len(s.clipboardText[s.debugRef[0]])) + 1)
+			y = float32(s.gameHeight) - float32(s.debugFont.Size[1])/s.heightScale*
+				(float32(len(listLFunc))+float32(len(s.clipboardText[s.debugRef[0]]))+1)
 			for i, f := range listLFunc {
 				if f != nil {
 					pn := s.debugRef[0]
@@ -1789,11 +1789,11 @@ func (s *System) fight() (reload bool) {
 						s, ok := dL.Get(-1).(lua.LString)
 						if ok && len(s) > 0 {
 							if i == 1 && (sys.debugWC == nil || sys.debugWC.sf(CSF_destroy)) {
-								put(&x, &y, string(s) + " disabled")
+								put(&x, &y, string(s)+" disabled")
 								break
 							}
 							put(&x, &y, string(s))
-							
+
 						}
 					}
 					dL.SetTop(top)

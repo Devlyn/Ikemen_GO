@@ -25,12 +25,29 @@ func chk(err error) {
 }
 func createLog(p string) *os.File {
 	//fmt.Println("Creating log")
-	f, err := os.Create(p)
-	if err != nil {
-		panic(err)
+	if !fileExists(p) {
+		f, err := os.Create(p)
+		if err != nil {
+			panic(err)
+		}
+		return f
+	} else {
+		f, err := os.Open(p)
+		if err != nil {
+			panic(err)
+		}
+		return f
 	}
-	return f
 }
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
 func closeLog(f *os.File) {
 	//fmt.Println("Closing log")
 	f.Close()
@@ -96,7 +113,7 @@ Debug Options:
 	chk(glfw.Init())
 	defer glfw.Terminate()
 	if _, err := ioutil.ReadFile("save/stats.json"); err != nil {
-		f, err := os.Create("save/stats.json")
+		f, err := os.Create("save/hjstats.json")
 		chk(err)
 		f.Write([]byte("{}"))
 		chk(f.Close())
@@ -130,8 +147,8 @@ Debug Options:
 	"Difficulty": 8,
 	"ExternalShaders": [],
 	"Fullscreen": false,
-	"GameWidth": 640,
-	"GameHeight": 480,
+	"GameWidth": 1280,
+	"GameHeight": 720,
 	"GameSpeed": 100,
 	"IP": {},
 	"LifebarFontScale": 1,
@@ -208,33 +225,69 @@ Debug Options:
 				"DOWN",
 				"LEFT",
 				"RIGHT",
-				"z",
-				"x",
-				"c",
+				"q",
+				"w",
+				"e",
 				"a",
 				"s",
 				"d",
 				"RETURN",
-				"q",
-				"w"
+				"MINUS",
+				"EQUALS"
 			]
 		},
 		{
 			"Joystick": -1,
 			"Buttons": [
-				"t",
-				"g",
-				"f",
-				"h",
+				"KP_8",
+				"KP_2",
+				"KP_4",
+				"KP_6",
+				"i",
+				"o",
+				"p",
 				"j",
 				"k",
 				"l",
-				"u",
-				"i",
-				"o",
-				"RSHIFT",
+				"KP_ENTER",
 				"LEFTBRACKET",
 				"RIGHTBRACKET"
+			]
+		},
+		{
+			"Joystick": -1,
+			"Buttons": [
+				"r",
+				"t",
+				"y",
+				"u",
+				"1",
+				"2",
+				"3",
+				"4",
+				"5",
+				"6",
+				"LCTRL",
+				"7",
+				"8"
+			]
+		},
+		{
+			"Joystick": -1,
+			"Buttons": [
+				"z",
+				"x",
+				"c",
+				"v",
+				"f",
+				"g",
+				"h",
+				"b",
+				"n",
+				"m",
+				"RCTRL",
+				"COMMA",
+				"PERIOD"
 			]
 		}
 	],
@@ -242,37 +295,73 @@ Debug Options:
 		{
 			"Joystick": 0,
 			"Buttons": [
-				"-3",
-				"-4",
-				"-1",
-				"-2",
-				"0",
-				"1",
-				"4",
+				"14",
+				"16",
+				"17",
+				"15",
 				"2",
+				"1",
+				"0",
 				"3",
 				"5",
+				"4",
+				"9",
 				"7",
-				"-10",
-				"-12"
+				"6"
 			]
 		},
 		{
 			"Joystick": 1,
 			"Buttons": [
-				"-3",
-				"-4",
-				"-1",
-				"-2",
-				"0",
-				"1",
-				"4",
+				"14",
+				"16",
+				"17",
+				"15",
 				"2",
+				"1",
+				"0",
 				"3",
 				"5",
+				"4",
+				"9",
 				"7",
-				"-10",
-				"-12"
+				"6"
+			]
+		},
+		{
+			"Joystick": 2,
+			"Buttons": [
+				"14",
+				"16",
+				"17",
+				"15",
+				"2",
+				"1",
+				"0",
+				"3",
+				"5",
+				"4",
+				"9",
+				"7",
+				"6"
+			]
+		},
+		{
+			"Joystick": 3,
+			"Buttons": [
+				"14",
+				"16",
+				"17",
+				"15",
+				"2",
+				"1",
+				"0",
+				"3",
+				"5",
+				"4",
+				"9",
+				"7",
+				"6"
 			]
 		}
 	]
@@ -463,6 +552,16 @@ Debug Options:
 	//os.Mkdir("debug", os.ModeSticky|0755)
 	log := createLog("Ikemen.log")
 	defer closeLog(log)
+
+	updated := glfw.UpdateGamepadMappings(getGameDb())
+	if updated {
+		fmt.Fprintln(log, "Gamemappings have been updated")
+	}
+	fmt.Println("Gamepad Checks: ")
+	fmt.Println("Controller 1 aanwezig: ", glfw.Joystick1.Present())
+	fmt.Println("Controller 2 aanwezig: ", glfw.Joystick2.Present())
+	fmt.Println("Controller 3 aanwezig: ", glfw.Joystick3.Present())
+	fmt.Println("Controller 4 aanwezig: ", glfw.Joystick4.Present())
 	l := sys.init(tmp.GameWidth, tmp.GameHeight)
 	if err := l.DoFile(tmp.System); err != nil {
 		fmt.Fprintln(log, err)
@@ -478,6 +577,7 @@ Debug Options:
 			panic(err)
 		}
 	}
+
 	if !sys.gameEnd {
 		sys.gameEnd = true
 	}

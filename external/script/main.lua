@@ -23,6 +23,8 @@ file = io.open("save/stats.json","r")
 stats = json.decode(file:read("*all"))
 file:close()
 
+
+require('external.script.dump')
 --;===========================================================
 --; COMMON FUNCTIONS
 --;===========================================================
@@ -1944,6 +1946,60 @@ main.t_itemname = {
 		main.f_menuFade('title_info', 'fadeout', cursorPosY, moveTxt, item, t)
 		setGameMode('scorechallenge')
 		start.f_selectSimple()
+	end,
+	--4P VS MODE
+	['4pversus'] = function(cursorPosY, moveTxt, item, t)
+		setHomeTeam(1) --P1 side considered the home team
+		main.p2In = 2 --P2 controls P2 side of the select screen
+		main.p3In = 3
+		main.p4In = 4
+		main.stageMenu = true --stage selection enabled
+		main.p2Faces = true --additional window with P2 select screen small portraits (faces) enabled
+		main.p2SelectMenu = true
+		main.versusScreen = true
+		main.victoryScreen = true
+		--uses default main.t_charparam assignment
+		main.t_lifebar.p1score = true
+		main.t_lifebar.p2score = true
+		if t[item].itemname == '4pversus' then
+			main.p1TeamMenu = {mode = 1, chars = 2} --predefined P1 team mode as Single, 1 Character
+			main.p2TeamMenu = {mode = 1, chars = 2} --predefined P2 team mode as Single, 1 Character
+			main.txt_mainSelect:update({text = motif.select_info.title_text_teamversus})
+		end
+		sndPlay(motif.files.snd_data, motif.title_info.cursor_done_snd[1], motif.title_info.cursor_done_snd[2])
+		main.f_menuFade('title_info', 'fadeout', cursorPosY, moveTxt, item, t)
+		setGameMode('4pversus')
+		start.f_select4pSimple()
+	end,
+	--4P TEAM VERSUS
+	['4pcoop'] = function(cursorPosY, moveTxt, item, t)
+		setHomeTeam(1) --P1 side considered the home team
+		main.p2In = 2 --P2 controls P2 side of the select screen
+		main.p3In = 3
+		main.p4In = 4
+		main.p2Faces = true
+		--main.p2SelectMenu = true
+		main.resetScore = true
+		main.versusScreen = true
+		main.victoryScreen = true
+		main.t_charparam.stage = true
+		main.t_charparam.music = true
+		main.t_charparam.ai = true
+		main.t_charparam.rounds = true
+		--main.t_charparam.time = true
+		--main.t_charparam.onlyme = true
+		--main.t_charparam.rivals = true
+		main.t_lifebar.p1score = true
+		main.t_lifebar.p2ai = true
+		main.resultsTable = motif.win_screen
+		main.credits = config.Credits - 1
+		main.p1TeamMenu = {mode = 1, chars = 4} --predefined P1 team mode as 4P, 4 Character
+		main.p2TeamMenu = {mode = 1, chars = 4}
+		main.txt_mainSelect:update({text = motif.select_info.title_text_teamcoop})
+		sndPlay(motif.files.snd_data, motif.title_info.cursor_done_snd[1], motif.title_info.cursor_done_snd[2])
+		main.f_menuFade('title_info', 'fadeout', cursorPosY, moveTxt, item, t)
+		setGameMode('4pcoop')
+		start.f_select4pSimple()
 	end,
 	--VS MODE / TEAM VERSUS
 	['versus'] = function(cursorPosY, moveTxt, item, t)

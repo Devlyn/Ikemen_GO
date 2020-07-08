@@ -32,18 +32,32 @@ local t_roster = {}
 local t_aiRamp = {}
 local t_p1Selected = {}
 local t_p2Selected = {}
+local t_p3Selected = {}
+local t_p4Selected = {}
 local t_p1Cursor = {}
 local t_p2Cursor = {}
+local t_p3Cursor = {}
+local t_p4Cursor = {}
 local p1RestoreCursor = false
 local p2RestoreCursor = false
+local p3RestoreCursor = false
+local p4RestoreCursor = false
 local p1Cell = false
 local p2Cell = false
+local p3Cell = false
+local p4Cell = false
 local p1TeamEnd = false
 local p1SelEnd = false
 local p1Ratio = false
 local p2TeamEnd = false
 local p2SelEnd = false
 local p2Ratio = false
+local p3TeamEnd = false
+local p3SelEnd = false
+local p3Ratio = false
+local p4TeamEnd = false
+local p4SelEnd = false
+local p4Ratio = false
 local selScreenEnd = false
 local stageEnd = false
 local coopEnd = false
@@ -57,10 +71,18 @@ local p1SelX = 0
 local p1SelY = 0
 local p2SelX = 0
 local p2SelY = 0
+local p3SelX = 0
+local p3SelY = 0
+local p4SelX = 0
+local p4SelY = 0
 local p1FaceOffset = 0
 local p2FaceOffset = 0
+local p3FaceOffset = 0
+local p4FaceOffset = 0
 local p1RowOffset = 0
 local p2RowOffset = 0
+local p3RowOffset = 0
+local p4RowOffset = 0
 local winner = 0
 local t_gameStats = {}
 local t_recordText = {}
@@ -70,6 +92,10 @@ local p1FaceX = 0
 local p1FaceY = 0
 local p2FaceX = 0
 local p2FaceY = 0
+local p3FaceX = 0
+local p3FaceY = 0
+local p4FaceX = 0
+local p4FaceY = 0
 local p1TeamMode = 0
 local p2TeamMode = 0
 local lastMatch = 0
@@ -152,6 +178,14 @@ function start.f_makeRoster(t_ret)
 			else --default settings
 				t = start.f_unifySettings(main.t_selOptions.teammaxmatches, t_static)
 			end
+		end
+	--4PCoop
+	elseif gameMode('4pcoop') then
+		t_static = main.t_orderChars
+		if main.t_selChars[t_p1Selected[1].ref + 1].maxmatches ~= nil and main.t_selOptions[main.t_selChars[t_p1Selected[1].ref + 1].maxmatches .. "_teammaxmatches"] ~= nil then --custom settings exists as char param
+			t = start.f_unifySettings(main.t_selOptions[main.t_selChars[t_p1Selected[1].ref + 1].maxmatches .. "_teammaxmatches"], t_static)
+		else --default settings
+			t = start.f_unifySettings(main.t_selOptions.teammaxmatches, t_static)
 		end
 	--Survival
 	elseif gameMode('survival') or gameMode('survivalcoop') or gameMode('netplaysurvivalcoop') then
@@ -328,7 +362,7 @@ function start.f_remapAI()
 		end
 		for i = 3, p1NumChars * 2 do
 			if i % 2 ~= 0 then --odd value
-				remapInput(i, 1) --P3/5/7 character uses P1 controls
+				remapInput(i, 3) --P3/5/7 character uses P1 controls
 				setCom(i, start.f_difficulty(i, offset))
 			end
 		end
@@ -336,7 +370,7 @@ function start.f_remapAI()
 		for i = 1, p1NumChars * 2 do
 			if i % 2 ~= 0 then --odd value
 				if main.p1In == 1 and not main.aiFight then
-					remapInput(i, 1) --P1/3/5/7 character uses P1 controls
+					remapInput(i, 3) --P1/3/5/7 character uses P1 controls
 					setCom(i, 0)
 				else
 					setCom(i, start.f_difficulty(i, offset))
@@ -347,7 +381,7 @@ function start.f_remapAI()
 		for i = 1, p1NumChars * 2 do
 			if i % 2 ~= 0 then --odd value
 				if main.p1In == 1 and not main.aiFight then
-					remapInput(i, 1) --P1/3/5/7 character uses P1 controls
+					remapInput(i, 3) --P1/3/5/7 character uses P1 controls
 					setCom(i, 0)
 				else
 					setCom(i, start.f_difficulty(i, offset))
@@ -370,7 +404,7 @@ function start.f_remapAI()
 		end
 		for i = 4, p2NumChars * 2 do
 			if i % 2 == 0 then --even value
-				remapInput(i, 2) --P4/6/8 character uses P2 controls
+				remapInput(i, 4) --P4/6/8 character uses P2 controls
 				setCom(i, start.f_difficulty(i, offset))
 			end
 		end
@@ -378,7 +412,7 @@ function start.f_remapAI()
 		for i = 2, p2NumChars * 2 do
 			if i % 2 == 0 then --even value
 				if main.p2In == 2 and not main.aiFight and not main.coop then
-					remapInput(i, 2) --P2/4/6/8 character uses P2 controls
+					remapInput(i, 4) --P2/4/6/8 character uses P2 controls
 					setCom(i, 0)
 				else
 					setCom(i, start.f_difficulty(i, offset))
@@ -389,13 +423,28 @@ function start.f_remapAI()
 		for i = 2, p2NumChars * 2 do
 			if i % 2 == 0 then --even value
 				if main.p2In == 2 and not main.aiFight and not main.coop then
-					remapInput(i, 2) --P2/4/6/8 character uses P2 controls
+					remapInput(i, 4) --P2/4/6/8 character uses P2 controls
 					setCom(i, 0)
 				else
 					setCom(i, start.f_difficulty(i, offset))
 				end
 			end
 		end
+	end
+	-- For this mode we expect that there are 4 actual players
+	if (gameMode('4pversus')) then
+		remapInput(3, 3) --Player 3 get's 3rd character
+		setCom(3,0) --Turning off the comp
+		remapInput(4, 4) --Player 4 get's 4th character
+		setCom(4,0) --Turning off the comp
+	end
+	if (gameMode('4pcoop')) then
+		remapInput(3, 2)
+		setCom(3,0)
+		remapInput(5, 3)
+		setCom(5,0)
+		remapInput(7,4)
+		setCom(7,0)
 	end
 end
 
@@ -1473,6 +1522,89 @@ function start.f_selectSimple()
 			--resetRemapInput()
 			--main.reconnect = winner == -1
 		end
+	end
+end
+
+--;===========================================================
+--; SIMPLE LOOP (4P VS MODE, 4P TEAM COOP)
+--;===========================================================
+function start.f_select4pSimple()
+	start.f_startCell()
+	t_p1Cursor = {}
+	t_p2Cursor = {}
+	t_p3Cursor = {}
+	t_p4Cursor = {}
+	p1RestoreCursor = false
+	p2RestoreCursor = false
+	p3RestoreCursor = false
+	p4RestoreCursor = false
+	p1TeamMenu = 1
+	p2TeamMenu = 1
+	p1FaceOffset = 0
+	p2FaceOffset = 0
+	p3FaceOffset = 0
+	p4FaceOffset = 0
+	p1RowOffset = 0
+	p2RowOffset = 0
+	p3RowOffset = 0
+	p4RowOffset = 0
+	stageList = 0
+	while true do --outer loop (moved back here after pressing ESC)
+		start.f_selectReset()
+		while true do --inner loop
+			fadeType = 'fadein'
+			selectStart()
+			if not start.f_selectScreen() then
+				print('Esc pressed!')
+				sndPlay(motif.files.snd_data, motif.select_info.cancel_snd[1], motif.select_info.cancel_snd[2])
+				main.f_bgReset(motif.titlebgdef.bg)
+				main.f_playBGM(true, motif.music.title_bgm, motif.music.title_bgm_loop, motif.music.title_bgm_volume, motif.music.title_bgm_loopstart, motif.music.title_bgm_loopend)
+				return
+			end
+			if gameMode('4pcoop') then
+				--first match
+				if matchNo == 0 then
+					--generate roster
+					t_roster = start.f_makeRoster()
+					lastMatch = #t_roster
+					matchNo = 1
+					--generate AI ramping table
+					start.f_aiRamp(1)
+				end
+				--assign enemy team
+				if #t_p2Selected == 0 then
+					local shuffle = true
+					for i = 1, #t_roster[matchNo] do
+						table.insert(t_p2Selected, {ref = t_roster[matchNo][i], pal = start.f_selectPal(t_roster[matchNo][i]), ratio = start.f_setRatio(2)})
+						if shuffle then
+							main.f_tableShuffle(t_p2Selected)
+						end
+					end
+				end
+			end
+			--fight initialization
+			start.f_overrideCharData()
+			start.f_remapAI()
+			start.f_setRounds()
+			stageNo = start.f_setStage(stageNo)
+			if start.f_selectVersus() == nil then break end
+			start.setLastMatchFlags(gameMode())
+			clearColor(motif.selectbgdef.bgclearcolor[1], motif.selectbgdef.bgclearcolor[2], motif.selectbgdef.bgclearcolor[3])
+			loadStart()
+			winner, t_gameStats = game()
+			start.f_saveData()
+			if start.f_selectVictory() == nil then break end
+			if challenger then
+				return
+			end
+			if winner == -1 then break end --player exit the game via ESC
+			start.f_storeSavedData(gameMode(), winner == 1)
+			if start.f_result(gameMode()) == nil then break end
+			start.f_selectReset()
+			--main.f_cmdInput()
+			refresh()
+		end
+		esc(false) --reset ESC
 	end
 end
 

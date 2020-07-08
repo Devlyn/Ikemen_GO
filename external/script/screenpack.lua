@@ -1,5 +1,7 @@
 -- Screenpack config file
 
+require('external.script.dump')
+
 function main.IntLocalcoordValues()
 	main.SP_Localcoord = {}
 	main.LB_Localcoord = {}
