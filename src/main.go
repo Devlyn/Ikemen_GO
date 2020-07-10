@@ -15,6 +15,19 @@ import (
 	lua "github.com/yuin/gopher-lua"
 )
 
+const (
+	// Define system constants
+	PSeperator               string = string(os.PathSeparator)
+	ConfigDirName            string = "save"
+	ConfigPath               string = ConfigDirName + PSeperator
+	ReplayDirPath            string = ConfigPath + "replays"
+	ConfigFilePath           string = ConfigPath + "config.json"
+	LogFileName              string = "Ikemen.log"
+	StatsFilePath            string = ConfigPath + "stats.json"
+	HJStatsFilePath          string = ConfigPath + "hjstats.json"
+	GameControllerDBFilePath string = ConfigPath + "gamecontrollerdb.txt"
+)
+
 func init() {
 	runtime.LockOSThread()
 }
@@ -50,11 +63,11 @@ func fileExists(filename string) bool {
 
 func closeLog(f *os.File) {
 	//fmt.Println("Closing log")
-	f.Close()
+	chk(f.Close())
 }
 func main() {
-	os.Mkdir("save", os.ModeSticky|0755)
-	os.Mkdir("save/replays", os.ModeSticky|0755)
+	os.Mkdir(ConfigDirName, os.ModeSticky|0755)
+	os.Mkdir(ReplayDirPath, os.ModeSticky|0755)
 	if len(os.Args[1:]) > 0 {
 		sys.cmdFlags = make(map[string]string)
 		key := ""
@@ -110,10 +123,15 @@ Debug Options:
 			}
 		}
 	}
+	// Initialize GLFW library
 	chk(glfw.Init())
 	defer glfw.Terminate()
-	if _, err := ioutil.ReadFile("save/stats.json"); err != nil {
-		f, err := os.Create("save/hjstats.json")
+
+	// Create log file to print errors to
+	log := createLog(LogFileName)
+	defer closeLog(log)
+	if _, err := ioutil.ReadFile(StatsFilePath); err != nil {
+		f, err := os.Create(HJStatsFilePath)
 		chk(err)
 		f.Write([]byte("{}"))
 		chk(f.Close())
@@ -450,8 +468,9 @@ Debug Options:
 			Buttons  []interface{}
 		}
 	}{}
+	// Read the config JSON file and unmarshal it to the tmp variable
 	chk(json.Unmarshal(defcfg, &tmp))
-	if bytes, err := ioutil.ReadFile("save/config.json"); err == nil {
+	if bytes, err := ioutil.ReadFile(ConfigFilePath); err == nil {
 		if len(bytes) >= 3 &&
 			bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf {
 			bytes = bytes[3:]
@@ -459,7 +478,10 @@ Debug Options:
 		chk(json.Unmarshal(bytes, &tmp))
 	}
 	cfg, _ := json.MarshalIndent(tmp, "", "	")
-	chk(ioutil.WriteFile("save/config.json", cfg, 0644))
+	// Write to the config JSON file (and also set permissions to CHMOD 644
+	chk(ioutil.WriteFile(ConfigFilePath, cfg, 0644))
+
+	// Bind the values from the config JSON to the system
 	sys.afterImageMax = tmp.MaxAfterImage
 	sys.allowDebugKeys = tmp.DebugKeys
 	sys.audioDucking = tmp.AudioDucking
@@ -545,18 +567,27 @@ Debug Options:
 			}
 		}
 	}
+	// Append keyconfig to keyconfig? based on the MaxAttachtedChar value
 	for i := 0; i < MaxAttachedChar; i++ {
 		sys.keyConfig = append(sys.keyConfig, KeyConfig{-1, -1, -1, -1,
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1})
 	}
 	//os.Mkdir("debug", os.ModeSticky|0755)
-	log := createLog("Ikemen.log")
-	defer closeLog(log)
 
-	updated := glfw.UpdateGamepadMappings(getGameDb())
-	if updated {
-		fmt.Fprintln(log, "Gamemappings have been updated")
+	// Add optional SDL gamecontroller db for optimized controller support
+	bytes, err := ioutil.ReadFile(GameControllerDBFilePath)
+	if bytes != nil && err == nil {
+		fmt.Println("Gamepad mappings found!")
+		updated := glfw.UpdateGamepadMappings(string(bytes))
+		if updated {
+			fmt.Println("Gamepad mappings have been updated")
+		}
+	} else {
+		fmt.Println("No gamepad mappings found")
 	}
+
+	// Check how many gamepads are present
+	// TODO: Check what happens when there are more then 4 controllers?
 	fmt.Println("Gamepad Checks: ")
 	fmt.Println("Controller 1 present: ", glfw.Joystick1.Present())
 	fmt.Println("Controller 2 present: ", glfw.Joystick2.Present())
@@ -578,6 +609,7 @@ Debug Options:
 		}
 	}
 
+	// Keep running until sys.gameEnd = false?
 	if !sys.gameEnd {
 		sys.gameEnd = true
 	}
