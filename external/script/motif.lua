@@ -268,6 +268,36 @@ local motif =
 		p2_cursor_move_snd = {100, 0},
 		p2_cursor_done_snd = {100, 1},
 		p2_random_move_snd = {100, 0},
+		p3_cursor_startcell = {0, 4},
+		--p3_cursor_active_anim = nil,
+		p3_cursor_active_spr = {},
+		p3_cursor_active_offset = {0, 0},
+		p3_cursor_active_facing = 1,
+		p3_cursor_active_scale = {1.0, 1.0},
+		--p3_cursor_done_anim = nil,
+		p3_cursor_done_spr = {},
+		p3_cursor_done_offset = {0, 0},
+		p3_cursor_done_facing = 1,
+		p3_cursor_done_scale = {1.0, 1.0},
+		p3_cursor_blink = 1,
+		p3_cursor_move_snd = {100, 0},
+		p3_cursor_done_snd = {100, 1},
+		p3_random_move_snd = {100, 0},
+		p4_cursor_startcell = {0, 4},
+		--p4_cursor_active_anim = nil,
+		p4_cursor_active_spr = {},
+		p4_cursor_active_offset = {0, 0},
+		p4_cursor_active_facing = 1,
+		p4_cursor_active_scale = {1.0, 1.0},
+		--p4_cursor_done_anim = nil,
+		p4_cursor_done_spr = {},
+		p4_cursor_done_offset = {0, 0},
+		p4_cursor_done_facing = 1,
+		p4_cursor_done_scale = {1.0, 1.0},
+		p4_cursor_blink = 1,
+		p4_cursor_move_snd = {100, 0},
+		p4_cursor_done_snd = {100, 1},
+		p4_random_move_snd = {100, 0},
 		random_move_snd_cancel = 0,
 		stage_move_snd = {100, 0},
 		stage_done_snd = {100, 1},
@@ -332,6 +362,36 @@ local motif =
 		p2_c3_face_scale = {1.0, 1.0}, --Ikemen feature
 		p2_c4_face_offset = {0, 0}, --Ikemen feature
 		p2_c4_face_scale = {1.0, 1.0}, --Ikemen feature
+		p3_face_spr = {9000, 1},
+		p3_face_offset = {0, 0},
+		p3_face_facing = -1,
+		p3_face_scale = {1.0, 1.0},
+		p3_face_window = {0, 0, config.GameWidth, config.GameHeight},
+		p3_face_num = 1, --Ikemen feature
+		p3_face_spacing = {0, 0}, --Ikemen feature
+		p3_c1_face_offset = {0, 0}, --Ikemen feature
+		p3_c1_face_scale = {1.0, 1.0}, --Ikemen feature
+		p3_c2_face_offset = {0, 0}, --Ikemen feature
+		p3_c2_face_scale = {1.0, 1.0}, --Ikemen feature
+		p3_c3_face_offset = {0, 0}, --Ikemen feature
+		p3_c3_face_scale = {1.0, 1.0}, --Ikemen feature
+		p3_c4_face_offset = {0, 0}, --Ikemen feature
+		p3_c4_face_scale = {1.0, 1.0}, --Ikemen feature
+		p4_face_spr = {9000, 1},
+		p4_face_offset = {0, 0},
+		p4_face_facing = -1,
+		p4_face_scale = {1.0, 1.0},
+		p4_face_window = {0, 0, config.GameWidth, config.GameHeight},
+		p4_face_num = 1, --Ikemen feature
+		p4_face_spacing = {0, 0}, --Ikemen feature
+		p4_c1_face_offset = {0, 0}, --Ikemen feature
+		p4_c1_face_scale = {1.0, 1.0}, --Ikemen feature
+		p4_c2_face_offset = {0, 0}, --Ikemen feature
+		p4_c2_face_scale = {1.0, 1.0}, --Ikemen feature
+		p4_c3_face_offset = {0, 0}, --Ikemen feature
+		p4_c3_face_scale = {1.0, 1.0}, --Ikemen feature
+		p4_c4_face_offset = {0, 0}, --Ikemen feature
+		p4_c4_face_scale = {1.0, 1.0}, --Ikemen feature
 		p1_name_offset = {0, 0},
 		p1_name_font = {'jg.fnt', 4, 1, 255, 255, 255, 255, 0},
 		p1_name_font_scale = {1.0, 1.0},
@@ -342,6 +402,16 @@ local motif =
 		p2_name_font_scale = {1.0, 1.0},
 		p2_name_font_height = -1, --Ikemen feature
 		p2_name_spacing = {0, 14},
+		p3_name_offset = {0, 0},
+		p3_name_font = {'jg.fnt', 1, -1, 255, 255, 255, 255, 0},
+		p3_name_font_scale = {1.0, 1.0},
+		p3_name_font_height = -1, --Ikemen feature
+		p3_name_spacing = {0, 14},
+		p4_name_offset = {0, 0},
+		p4_name_font = {'jg.fnt', 1, -1, 255, 255, 255, 255, 0},
+		p4_name_font_scale = {1.0, 1.0},
+		p4_name_font_height = -1, --Ikemen feature
+		p4_name_spacing = {0, 14},
 		stage_pos = {0, 0},
 		stage_active_font = {'f-4x6.fnt', 0, 0, 255, 255, 255, 255, 0},
 		stage_active_font_scale = {1.0, 1.0},
@@ -603,6 +673,237 @@ local motif =
 		p2_teammenu_ratio7_icon_offset = {0, 0}, --Ikemen feature
 		p2_teammenu_ratio7_icon_facing = 1, --Ikemen feature
 		p2_teammenu_ratio7_icon_scale = {1.0, 1.0}, --Ikemen feature
+		p3_teammenu_pos = {0, 0},
+		--p3_teammenu_bg_anim = nil,
+		p3_teammenu_bg_spr = {},
+		p3_teammenu_bg_offset = {0, 0},
+		p3_teammenu_bg_facing = 1,
+		p3_teammenu_bg_scale = {1.0, 1.0},
+		--p3_teammenu_bg_single_anim = nil, --Ikemen feature
+		p3_teammenu_bg_single_spr = {}, --Ikemen feature
+		p3_teammenu_bg_single_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_bg_single_facing = 1, --Ikemen feature
+		p3_teammenu_bg_single_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_bg_simul_anim = nil, --Ikemen feature
+		p3_teammenu_bg_simul_spr = {}, --Ikemen feature
+		p3_teammenu_bg_simul_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_bg_simul_facing = 1, --Ikemen feature
+		p3_teammenu_bg_simul_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_bg_turns_anim = nil, --Ikemen feature
+		p3_teammenu_bg_turns_spr = {}, --Ikemen feature
+		p3_teammenu_bg_turns_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_bg_turns_facing = 1, --Ikemen feature
+		p3_teammenu_bg_turns_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_bg_tag_anim = nil, --Ikemen feature
+		p3_teammenu_bg_tag_spr = {}, --Ikemen feature
+		p3_teammenu_bg_tag_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_bg_tag_facing = 1, --Ikemen feature
+		p3_teammenu_bg_tag_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_bg_ratio_anim = nil, --Ikemen feature
+		p3_teammenu_bg_ratio_spr = {}, --Ikemen feature
+		p3_teammenu_bg_ratio_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_bg_ratio_facing = 1, --Ikemen feature
+		p3_teammenu_bg_ratio_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_selftitle_anim = nil,
+		p3_teammenu_selftitle_spr = {},
+		p3_teammenu_selftitle_offset = {0, 0},
+		p3_teammenu_selftitle_facing = 1,
+		p3_teammenu_selftitle_scale = {1.0, 1.0},
+		p3_teammenu_selftitle_font = {'jg.fnt', 0, -1, 255, 255, 255, 255, 0},
+		p3_teammenu_selftitle_font_scale = {1.0, 1.0},
+		p3_teammenu_selftitle_font_height = -1, --Ikemen feature
+		p3_teammenu_selftitle_text = '',
+		--p3_teammenu_enemytitle_anim = nil,
+		p3_teammenu_enemytitle_spr = {},
+		p3_teammenu_enemytitle_offset = {0, 0},
+		p3_teammenu_enemytitle_facing = 1,
+		p3_teammenu_enemytitle_scale = {1.0, 1.0},
+		p3_teammenu_enemytitle_font = {'jg.fnt', 0, -1, 255, 255, 255, 255, 0},
+		p3_teammenu_enemytitle_font_scale = {1.0, 1.0},
+		p3_teammenu_enemytitle_font_height = -1, --Ikemen feature
+		p3_teammenu_enemytitle_text = '',
+		p3_teammenu_move_snd = {100, 0},
+		p3_teammenu_value_snd = {100, 0},
+		p3_teammenu_done_snd = {100, 1},
+		p3_teammenu_item_offset = {0, 0},
+		p3_teammenu_item_spacing = {0, 15},
+		p3_teammenu_item_font_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_item_font = {'jg.fnt', 0, -1, 255, 255, 255, 255, 0},
+		p3_teammenu_item_font_scale = {1.0, 1.0},
+		p3_teammenu_item_font_height = -1, --Ikemen feature
+		p3_teammenu_item_active_font = {'jg.fnt', 1, -1, 255, 255, 255, 255, 0},
+		p3_teammenu_item_active_font_scale = {1.0, 1.0},
+		p3_teammenu_item_active_font_height = -1, --Ikemen feature
+		p3_teammenu_item_active2_font = {'jg.fnt', 0, -1, 255, 255, 255, 255, 0},
+		p3_teammenu_item_active2_font_scale = {1.0, 1.0},
+		p3_teammenu_item_active2_font_height = -1, --Ikemen feature
+		--p3_teammenu_item_cursor_anim = nil,
+		p3_teammenu_item_cursor_spr = {},
+		p3_teammenu_item_cursor_offset = {0, 0},
+		p3_teammenu_item_cursor_facing = 1,
+		p3_teammenu_item_cursor_scale = {1.0, 1.0},
+		--p3_teammenu_value_icon_anim = nil,
+		p3_teammenu_value_icon_spr = {},
+		p3_teammenu_value_icon_offset = {0, 0},
+		p3_teammenu_value_icon_facing = 1,
+		p3_teammenu_value_icon_scale = {1.0, 1.0},
+		--p3_teammenu_value_empty_icon_anim = nil,
+		p3_teammenu_value_empty_icon_spr = {},
+		p3_teammenu_value_empty_icon_offset = {0, 0},
+		p3_teammenu_value_empty_icon_facing = 1,
+		p3_teammenu_value_empty_icon_scale = {1.0, 1.0},
+		p3_teammenu_value_spacing = {-6, 0},
+		--p3_teammenu_ratio1_icon_anim = nil, --Ikemen feature
+		p3_teammenu_ratio1_icon_spr = {}, --Ikemen feature
+		p3_teammenu_ratio1_icon_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_ratio1_icon_facing = 1, --Ikemen feature
+		p3_teammenu_ratio1_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_ratio2_icon_anim = nil, --Ikemen feature
+		p3_teammenu_ratio2_icon_spr = {}, --Ikemen feature
+		p3_teammenu_ratio2_icon_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_ratio2_icon_facing = 1, --Ikemen feature
+		p3_teammenu_ratio2_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_ratio3_icon_anim = nil, --Ikemen feature
+		p3_teammenu_ratio3_icon_spr = {}, --Ikemen feature
+		p3_teammenu_ratio3_icon_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_ratio3_icon_facing = 1, --Ikemen feature
+		p3_teammenu_ratio3_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_ratio4_icon_anim = nil, --Ikemen feature
+		p3_teammenu_ratio4_icon_spr = {}, --Ikemen feature
+		p3_teammenu_ratio4_icon_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_ratio4_icon_facing = 1, --Ikemen feature
+		p3_teammenu_ratio4_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_ratio5_icon_anim = nil, --Ikemen feature
+		p3_teammenu_ratio5_icon_spr = {}, --Ikemen feature
+		p3_teammenu_ratio5_icon_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_ratio5_icon_facing = 1, --Ikemen feature
+		p3_teammenu_ratio5_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_ratio6_icon_anim = nil, --Ikemen feature
+		p3_teammenu_ratio6_icon_spr = {}, --Ikemen feature
+		p3_teammenu_ratio6_icon_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_ratio6_icon_facing = 1, --Ikemen feature
+		p3_teammenu_ratio6_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p3_teammenu_ratio7_icon_anim = nil, --Ikemen feature
+		p3_teammenu_ratio7_icon_spr = {}, --Ikemen feature
+		p3_teammenu_ratio7_icon_offset = {0, 0}, --Ikemen feature
+		p3_teammenu_ratio7_icon_facing = 1, --Ikemen feature
+		p3_teammenu_ratio7_icon_scale = {1.0, 1.0}, --Ikemen feature
+		p4_teammenu_pos = {0, 0},
+		--p4_teammenu_bg_anim = nil,
+		p4_teammenu_bg_spr = {},
+		p4_teammenu_bg_offset = {0, 0},
+		p4_teammenu_bg_facing = 1,
+		p4_teammenu_bg_scale = {1.0, 1.0},
+		--p4_teammenu_bg_single_anim = nil, --Ikemen feature
+		p4_teammenu_bg_single_spr = {}, --Ikemen feature
+		p4_teammenu_bg_single_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_bg_single_facing = 1, --Ikemen feature
+		p4_teammenu_bg_single_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_bg_simul_anim = nil, --Ikemen feature
+		p4_teammenu_bg_simul_spr = {}, --Ikemen feature
+		p4_teammenu_bg_simul_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_bg_simul_facing = 1, --Ikemen feature
+		p4_teammenu_bg_simul_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_bg_turns_anim = nil, --Ikemen feature
+		p4_teammenu_bg_turns_spr = {}, --Ikemen feature
+		p4_teammenu_bg_turns_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_bg_turns_facing = 1, --Ikemen feature
+		p4_teammenu_bg_turns_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_bg_tag_anim = nil, --Ikemen feature
+		p4_teammenu_bg_tag_spr = {}, --Ikemen feature
+		p4_teammenu_bg_tag_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_bg_tag_facing = 1, --Ikemen feature
+		p4_teammenu_bg_tag_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_bg_ratio_anim = nil, --Ikemen feature
+		p4_teammenu_bg_ratio_spr = {}, --Ikemen feature
+		p4_teammenu_bg_ratio_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_bg_ratio_facing = 1, --Ikemen feature
+		p4_teammenu_bg_ratio_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_selftitle_anim = nil,
+		p4_teammenu_selftitle_spr = {},
+		p4_teammenu_selftitle_offset = {0, 0},
+		p4_teammenu_selftitle_facing = 1,
+		p4_teammenu_selftitle_scale = {1.0, 1.0},
+		p4_teammenu_selftitle_font = {'jg.fnt', 0, -1, 255, 255, 255, 255, 0},
+		p4_teammenu_selftitle_font_scale = {1.0, 1.0},
+		p4_teammenu_selftitle_font_height = -1, --Ikemen feature
+		p4_teammenu_selftitle_text = '',
+		--p4_teammenu_enemytitle_anim = nil,
+		p4_teammenu_enemytitle_spr = {},
+		p4_teammenu_enemytitle_offset = {0, 0},
+		p4_teammenu_enemytitle_facing = 1,
+		p4_teammenu_enemytitle_scale = {1.0, 1.0},
+		p4_teammenu_enemytitle_font = {'jg.fnt', 0, -1, 255, 255, 255, 255, 0},
+		p4_teammenu_enemytitle_font_scale = {1.0, 1.0},
+		p4_teammenu_enemytitle_font_height = -1, --Ikemen feature
+		p4_teammenu_enemytitle_text = '',
+		p4_teammenu_move_snd = {100, 0},
+		p4_teammenu_value_snd = {100, 0},
+		p4_teammenu_done_snd = {100, 1},
+		p4_teammenu_item_offset = {0, 0},
+		p4_teammenu_item_spacing = {0, 15},
+		p4_teammenu_item_font_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_item_font = {'jg.fnt', 0, -1, 255, 255, 255, 255, 0},
+		p4_teammenu_item_font_scale = {1.0, 1.0},
+		p4_teammenu_item_font_height = -1, --Ikemen feature
+		p4_teammenu_item_active_font = {'jg.fnt', 1, -1, 255, 255, 255, 255, 0},
+		p4_teammenu_item_active_font_scale = {1.0, 1.0},
+		p4_teammenu_item_active_font_height = -1, --Ikemen feature
+		p4_teammenu_item_active2_font = {'jg.fnt', 0, -1, 255, 255, 255, 255, 0},
+		p4_teammenu_item_active2_font_scale = {1.0, 1.0},
+		p4_teammenu_item_active2_font_height = -1, --Ikemen feature
+		--p4_teammenu_item_cursor_anim = nil,
+		p4_teammenu_item_cursor_spr = {},
+		p4_teammenu_item_cursor_offset = {0, 0},
+		p4_teammenu_item_cursor_facing = 1,
+		p4_teammenu_item_cursor_scale = {1.0, 1.0},
+		--p4_teammenu_value_icon_anim = nil,
+		p4_teammenu_value_icon_spr = {},
+		p4_teammenu_value_icon_offset = {0, 0},
+		p4_teammenu_value_icon_facing = 1,
+		p4_teammenu_value_icon_scale = {1.0, 1.0},
+		--p4_teammenu_value_empty_icon_anim = nil,
+		p4_teammenu_value_empty_icon_spr = {},
+		p4_teammenu_value_empty_icon_offset = {0, 0},
+		p4_teammenu_value_empty_icon_facing = 1,
+		p4_teammenu_value_empty_icon_scale = {1.0, 1.0},
+		p4_teammenu_value_spacing = {-6, 0},
+		--p4_teammenu_ratio1_icon_anim = nil, --Ikemen feature
+		p4_teammenu_ratio1_icon_spr = {}, --Ikemen feature
+		p4_teammenu_ratio1_icon_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_ratio1_icon_facing = 1, --Ikemen feature
+		p4_teammenu_ratio1_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_ratio2_icon_anim = nil, --Ikemen feature
+		p4_teammenu_ratio2_icon_spr = {}, --Ikemen feature
+		p4_teammenu_ratio2_icon_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_ratio2_icon_facing = 1, --Ikemen feature
+		p4_teammenu_ratio2_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_ratio3_icon_anim = nil, --Ikemen feature
+		p4_teammenu_ratio3_icon_spr = {}, --Ikemen feature
+		p4_teammenu_ratio3_icon_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_ratio3_icon_facing = 1, --Ikemen feature
+		p4_teammenu_ratio3_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_ratio4_icon_anim = nil, --Ikemen feature
+		p4_teammenu_ratio4_icon_spr = {}, --Ikemen feature
+		p4_teammenu_ratio4_icon_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_ratio4_icon_facing = 1, --Ikemen feature
+		p4_teammenu_ratio4_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_ratio5_icon_anim = nil, --Ikemen feature
+		p4_teammenu_ratio5_icon_spr = {}, --Ikemen feature
+		p4_teammenu_ratio5_icon_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_ratio5_icon_facing = 1, --Ikemen feature
+		p4_teammenu_ratio5_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_ratio6_icon_anim = nil, --Ikemen feature
+		p4_teammenu_ratio6_icon_spr = {}, --Ikemen feature
+		p4_teammenu_ratio6_icon_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_ratio6_icon_facing = 1, --Ikemen feature
+		p4_teammenu_ratio6_icon_scale = {1.0, 1.0}, --Ikemen feature
+		--p4_teammenu_ratio7_icon_anim = nil, --Ikemen feature
+		p4_teammenu_ratio7_icon_spr = {}, --Ikemen feature
+		p4_teammenu_ratio7_icon_offset = {0, 0}, --Ikemen feature
+		p4_teammenu_ratio7_icon_facing = 1, --Ikemen feature
+		p4_teammenu_ratio7_icon_scale = {1.0, 1.0}, --Ikemen feature
+		
 		timer_enabled = 0, --Ikemen feature
 		timer_offset = {0, 0}, --Ikemen feature
 		timer_font = {'f-6x9.def', 0, 0, 255, 255, 255, 255, 0}, --Ikemen feature
@@ -619,6 +920,8 @@ local motif =
 		record_text_timechallenge = '', --Ikemen feature
 		p1_select_snd = {-1, 0}, --Ikemen feature
 		p2_select_snd = {-1, 0}, --Ikemen feature
+		p3_select_snd = {-1, 0}, --Ikemen feature
+		p4_select_snd = {-1, 0}, --Ikemen feature
 	},
 	selectbgdef =
 	{
@@ -1102,7 +1405,7 @@ local motif =
 		title_font = {'f-6x9.def', 0, 0, 255, 255, 255, 255, 0},
 		title_font_scale = {1.0, 1.0},
 		title_font_height = -1, --Ikemen feature
-		menu_pos = {0, 33}, --Ikemen feature
+		menu_pos = {85, 33}, --Ikemen feature
 		menu_item_font = {'f-6x9.def', 0, 1, 191, 191, 191, 255, 0}, --Ikemen feature
 		menu_item_font_scale = {1.0, 1.0}, --Ikemen feature
 		menu_item_font_height = -1, --Ikemen feature
@@ -1243,16 +1546,16 @@ local motif =
 		menu_item_info_active_font = {'f-6x9.def', 0, -1, 247, 247, 0, 255, 0}, --Ikemen feature
 		menu_item_info_active_font_scale = {1.0, 1.0}, --Ikemen feature
 		menu_item_info_active_font_height = -1, --Ikemen feature
-		menu_item_p1_pos = {50, 33}, --Ikemen feature
-		menu_item_p2_pos = {150, 33}, --Ikemen feature
-		menu_item_p3_pos = {250, 33}, --Ikemen feature
-		menu_item_p4_pos = {350, 33}, --Ikemen feature
-		menu_key_p1_pos = {0, 33}, --Ikemen feature
-		menu_key_p2_pos = {100, 33}, --Ikemen feature
-		menu_key_p3_pos = {200, 33}, --Ikemen feature
-		menu_key_p4_pos = {300, 33}, --Ikemen feature
-		menu_key_item_spacing = {80, 13}, --Ikemen feature
-		menu_key_boxcursor_coords = {-5, -10, 86, 2}, --Ikemen feature
+		menu_item_p1_pos = {91, 33}, --Ikemen feature
+		menu_item_p2_pos = {230, 33}, --Ikemen feature
+		menu_item_p3_pos = {91, 33}, --Ikemen feature
+		menu_item_p4_pos = {230, 33}, --Ikemen feature
+		menu_key_p1_pos = {39, 33}, --Ikemen feature
+		menu_key_p2_pos = {178, 33}, --Ikemen feature
+		menu_key_p3_pos = {39, 33}, --Ikemen feature
+		menu_key_p4_pos = {178, 33}, --Ikemen feature
+		menu_key_item_spacing = {101, 13}, --Ikemen feature
+		menu_key_boxcursor_coords = {-5, -10, 106, 2}, --Ikemen feature
 		input_text_port = 'Type in Host Port, e.g. 7500.\nPress ENTER to accept.\nPress ESC to cancel.', --Ikemen feature
 		input_text_reswidth = 'Type in screen width.\nPress ENTER to accept.\nPress ESC to cancel.', --Ikemen feature
 		input_text_resheight = 'Type in screen height.\nPress ENTER to accept.\nPress ESC to cancel.', --Ikemen feature
@@ -1767,6 +2070,10 @@ t_dir = {
 	{s = 'p1_cursor_done_',               x = 0,                                                   y = 0},
 	{s = 'p2_cursor_active_',             x = 0,                                                   y = 0},
 	{s = 'p2_cursor_done_',               x = 0,                                                   y = 0},
+	{s = 'p3_cursor_active_',             x = 0,                                                   y = 0},
+	{s = 'p3_cursor_done_',               x = 0,                                                   y = 0},
+	{s = 'p4_cursor_active_',             x = 0,                                                   y = 0},
+	{s = 'p4_cursor_done_',               x = 0,                                                   y = 0},
 	{s = 'p1_teammenu_bg_',               x = t.p1_teammenu_pos[1],                                y = t.p1_teammenu_pos[2]},
 	{s = 'p1_teammenu_bg_single_',        x = t.p1_teammenu_pos[1],                                y = t.p1_teammenu_pos[2]},
 	{s = 'p1_teammenu_bg_simul_',         x = t.p1_teammenu_pos[1],                                y = t.p1_teammenu_pos[2]},
@@ -1803,6 +2110,43 @@ t_dir = {
 	{s = 'p2_teammenu_ratio5_icon_',      x = t.p2_teammenu_pos[1] + t.p2_teammenu_item_offset[1], y = t.p2_teammenu_pos[2] + t.p2_teammenu_item_offset[2]},
 	{s = 'p2_teammenu_ratio6_icon_',      x = t.p2_teammenu_pos[1] + t.p2_teammenu_item_offset[1], y = t.p2_teammenu_pos[2] + t.p2_teammenu_item_offset[2]},
 	{s = 'p2_teammenu_ratio7_icon_',      x = t.p2_teammenu_pos[1] + t.p2_teammenu_item_offset[1], y = t.p2_teammenu_pos[2] + t.p2_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_bg_',               x = t.p3_teammenu_pos[1],                                y = t.p3_teammenu_pos[2]},
+	{s = 'p3_teammenu_bg_single_',        x = t.p3_teammenu_pos[1],                                y = t.p3_teammenu_pos[2]},
+	{s = 'p3_teammenu_bg_simul_',         x = t.p3_teammenu_pos[1],                                y = t.p3_teammenu_pos[2]},
+	{s = 'p3_teammenu_bg_turns_',         x = t.p3_teammenu_pos[1],                                y = t.p3_teammenu_pos[2]},
+	{s = 'p3_teammenu_bg_tag_',           x = t.p3_teammenu_pos[1],                                y = t.p3_teammenu_pos[2]},
+	{s = 'p3_teammenu_bg_ratio_',         x = t.p3_teammenu_pos[1],                                y = t.p3_teammenu_pos[2]},
+	{s = 'p3_teammenu_selftitle_',        x = t.p3_teammenu_pos[1],                                y = t.p3_teammenu_pos[2]},
+	{s = 'p3_teammenu_enemytitle_',       x = t.p3_teammenu_pos[1],                                y = t.p3_teammenu_pos[2]},
+	{s = 'p3_teammenu_item_cursor_',      x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_value_icon_',       x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_value_empty_icon_', x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_ratio1_icon_',      x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_ratio2_icon_',      x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_ratio3_icon_',      x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_ratio4_icon_',      x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_ratio5_icon_',      x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_ratio6_icon_',      x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p3_teammenu_ratio7_icon_',      x = t.p3_teammenu_pos[1] + t.p3_teammenu_item_offset[1], y = t.p3_teammenu_pos[2] + t.p3_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_bg_',               x = t.p4_teammenu_pos[1],                                y = t.p4_teammenu_pos[2]},
+	{s = 'p4_teammenu_bg_single_',        x = t.p4_teammenu_pos[1],                                y = t.p4_teammenu_pos[2]},
+	{s = 'p4_teammenu_bg_simul_',         x = t.p4_teammenu_pos[1],                                y = t.p4_teammenu_pos[2]},
+	{s = 'p4_teammenu_bg_turns_',         x = t.p4_teammenu_pos[1],                                y = t.p4_teammenu_pos[2]},
+	{s = 'p4_teammenu_bg_tag_',           x = t.p4_teammenu_pos[1],                                y = t.p4_teammenu_pos[2]},
+	{s = 'p4_teammenu_bg_ratio_',         x = t.p4_teammenu_pos[1],                                y = t.p4_teammenu_pos[2]},
+	{s = 'p4_teammenu_selftitle_',        x = t.p4_teammenu_pos[1],                                y = t.p4_teammenu_pos[2]},
+	{s = 'p4_teammenu_enemytitle_',       x = t.p4_teammenu_pos[1],                                y = t.p4_teammenu_pos[2]},
+	{s = 'p4_teammenu_item_cursor_',      x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_value_icon_',       x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_value_empty_icon_', x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_ratio1_icon_',      x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_ratio2_icon_',      x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_ratio3_icon_',      x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_ratio4_icon_',      x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_ratio5_icon_',      x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_ratio6_icon_',      x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	{s = 'p4_teammenu_ratio7_icon_',      x = t.p4_teammenu_pos[1] + t.p4_teammenu_item_offset[1], y = t.p4_teammenu_pos[2] + t.p4_teammenu_item_offset[2]},
+	
 	{s = 'stage_portrait_random_',        x = t.stage_pos[1] + t.stage_portrait_offset[1],         y = t.stage_pos[2] + t.stage_portrait_offset[2]},
 }
 for i = 1, #t_dir do

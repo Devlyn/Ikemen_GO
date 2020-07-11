@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/Windblade-GR01/glfont"
+	"github.com/Devlyn/glfont"
 	findfont "github.com/flopp/go-findfont"
 )
 
@@ -347,7 +347,7 @@ func loadFntTtf(f *Fnt, fontfile string, filename string, height int32) {
 		panic(err)
 	}
 	f.ttf = ttf
-	
+
 	//Create Ttf dummy palettes
 	f.palettes = make([][256]uint32, 1)
 	for i := 0; i < 256; i++ {
@@ -536,7 +536,7 @@ func (f *Fnt) DrawText(txt string, x, y, xscl, yscl float32, bank, align int32,
 
 func (f *Fnt) DrawTtf(txt string, x, y, xscl, yscl float32, align int32,
 	blend bool, window *[4]int32, frgba [4]float32) {
-	
+
 	if len(txt) == 0 {
 		return
 	}
@@ -545,7 +545,7 @@ func (f *Fnt) DrawTtf(txt string, x, y, xscl, yscl float32, align int32,
 	//y += float32(f.offset[1]-int32(f.Size[1])+1)*yscl + float32(sys.gameHeight-240)
 
 	f.ttf.SetColor(frgba[0], frgba[1], frgba[2], frgba[3]) //r, g, b, a
-	f.ttf.Printf(x, y, (xscl+yscl)/2, align, blend, txt) //x, y, scale, align, blend, string, printf args
+	f.ttf.Printf(x, y, (xscl+yscl)/2, align, blend, txt)   //x, y, scale, align, blend, string, printf args
 }
 
 type TextSprite struct {

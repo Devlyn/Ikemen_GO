@@ -17,7 +17,7 @@ if not exist bin (
 echo Building Ikemen GO...
 echo.
 
-go build -ldflags -H=windowsgui -o ./bin/Ikemen_GO.exe ./src 
+go build -ldflags="-H=windowsgui" -o ./bin/Ikemen_GO.exe ./src
 
 echo.
 pause

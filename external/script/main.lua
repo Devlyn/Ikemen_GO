@@ -4,6 +4,7 @@
 --nClock = os.clock()
 --print("Elapsed time: " .. os.clock() - nClock)
 --setGCPercent(-1)
+require('external.script.dump')
 
 main = {}
 
@@ -22,7 +23,6 @@ file:close()
 file = io.open("save/stats.json","r")
 stats = json.decode(file:read("*all"))
 file:close()
-
 
 require('external.script.dump')
 --;===========================================================
@@ -1956,6 +1956,8 @@ main.t_itemname = {
 		main.stageMenu = true --stage selection enabled
 		main.p2Faces = true --additional window with P2 select screen small portraits (faces) enabled
 		main.p2SelectMenu = true
+		main.p3SelectMenu = true
+		main.p4SelectMenu = true
 		main.versusScreen = true
 		main.victoryScreen = true
 		--uses default main.t_charparam assignment
@@ -1971,14 +1973,17 @@ main.t_itemname = {
 		setGameMode('4pversus')
 		start.f_select4pSimple()
 	end,
-	--4P TEAM VERSUS
+	--4P TEAM CO OP
 	['4pcoop'] = function(cursorPosY, moveTxt, item, t)
 		setHomeTeam(1) --P1 side considered the home team
 		main.p2In = 2 --P2 controls P2 side of the select screen
 		main.p3In = 3
 		main.p4In = 4
-		main.p2Faces = true
-		--main.p2SelectMenu = true
+		main.coop = true
+		--main.p2Faces = true
+		main.p2SelectMenu = true
+		main.p3SelectMenu = true
+		main.p4SelectMenu = true
 		main.resetScore = true
 		main.versusScreen = true
 		main.victoryScreen = true
@@ -2620,13 +2625,19 @@ function main.f_default()
 	main.roundTime = config.RoundTime --default round time
 	main.p1Char = nil --no predefined P1 character (assigned via table: {X, Y, (...)})
 	main.p2Char = nil --no predefined P2 character (assigned via table: {X, Y, (...)})
+	main.p3Char = nil --no predefined P3 character (assigned via table: {X, Y, (...)})
+	main.p4Char = nil --no predefined P4 character (assigned via table: {X, Y, (...)})
 	main.p1TeamMenu = nil --no predefined P1 team mode (assigned via table: {mode = X, chars = Y})
 	main.p2TeamMenu = nil --no predefined P2 team mode (assigned via table: {mode = X, chars = Y})
+	main.p3TeamMenu = nil --no predefined P2 team mode (assigned via table: {mode = X, chars = Y})
+	main.p4TeamMenu = nil --no predefined P2 team mode (assigned via table: {mode = X, chars = Y})
 	main.aiFight = false --AI = config.Difficulty for all characters disabled
 	main.stageMenu = false --stage selection disabled
 	main.p2Faces = false --additional window with P2 select screen small portraits (faces) disabled
 	main.coop = false --P2 fighting on P1 side disabled
 	main.p2SelectMenu = false --P2 character selection disabled
+	main.p3SelectMenu = false --P2 character selection disabled
+	main.p4SelectMenu = false --P2 character selection disabled
 	main.resetScore = false --score is not set to lose count after loosing a match
 	main.quickContinue = false --continue without char selection enforcement disabled 
 	main.versusScreen = false --versus screen disabled
@@ -2636,6 +2647,8 @@ function main.f_default()
 	main.f_resetLifebar()
 	main.p1In = 1 --P1 controls P1 side of the select screen
 	main.p2In = 2 --P2 controls P2 side of the select screen
+	main.p3In = 3 --P3 controls P3 side of the select screen
+	main.p4In = 4 --P4 controls P4 side of the select screen
 	demoFrameCounter = 0
 	setAutoLevel(false) --generate autolevel.txt in game dir
 	setHomeTeam(2) --P2 side considered the home team: http://mugenguild.com/forum/topics/ishometeam-triggers-169132.0.html

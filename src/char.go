@@ -8,7 +8,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/gl/v3.3-compatibility/gl"
 )
 
 const MaxPalNo = 12
@@ -1701,9 +1701,9 @@ func (c *Char) clear2() {
 	c.sysFvarRangeSet(0, int32(NumSysFvar)-1, 0)
 	c.CharSystemVar = CharSystemVar{bindToId: -1,
 		angleScalse: [...]float32{1, 1}, alpha: [...]int32{255, 0},
-		width:      [...]float32{c.defFW(), c.defBW()},
-		attackMul:  float32(c.gi().data.attack) * c.ocd().attackRatio / 100,
-		defenceMul: 1,
+		width:         [...]float32{c.defFW(), c.defBW()},
+		attackMul:     float32(c.gi().data.attack) * c.ocd().attackRatio / 100,
+		defenceMul:    1,
 		customDefence: 1}
 	c.oldPos, c.drawPos = c.pos, c.pos
 	if c.helperIndex == 0 {
@@ -4990,7 +4990,7 @@ func (c *Char) update(cvmin, cvmax,
 			}
 		}
 	}
-	c.finalDefence = float64(((float32(c.gi().data.defence)*c.customDefence*c.defenceMul)/100))
+	c.finalDefence = float64(((float32(c.gi().data.defence) * c.customDefence * c.defenceMul) / 100))
 	if sys.tickNextFrame() {
 		c.pushed = false
 	}

@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/go-gl/gl/v2.1/gl"
+	"github.com/go-gl/gl/v3.3-compatibility/gl"
 )
 
 type TransType int32
@@ -567,9 +567,7 @@ func (s *Sprite) SetPxl(px []byte) {
 		s.Tex = newTexture()
 		gl.BindTexture(gl.TEXTURE_2D, uint32(*s.Tex))
 		gl.PixelStorei(gl.UNPACK_ALIGNMENT, 1)
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE,
-			int32(s.Size[0]), int32(s.Size[1]),
-			0, gl.LUMINANCE, gl.UNSIGNED_BYTE, unsafe.Pointer(&px[0]))
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, int32(s.Size[0]), int32(s.Size[1]), 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, unsafe.Pointer(&px[0]))
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP)
