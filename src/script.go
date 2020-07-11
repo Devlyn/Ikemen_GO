@@ -2652,11 +2652,11 @@ func triggerScriptInit(l *lua.LState) {
 		return 1
 	})
 	luaRegister(l, "attack", func(*lua.LState) int {
-		l.Push(lua.LNumber(sys.debugWC.CharSystemVar.attackMul*100))
+		l.Push(lua.LNumber(sys.debugWC.CharSystemVar.attackMul * 100))
 		return 1
 	})
 	luaRegister(l, "defence", func(*lua.LState) int {
-		l.Push(lua.LNumber(sys.debugWC.CharSystemVar.finalDefence*100))
+		l.Push(lua.LNumber(sys.debugWC.CharSystemVar.finalDefence * 100))
 		return 1
 	})
 	luaRegister(l, "lose", func(*lua.LState) int {
@@ -3126,7 +3126,7 @@ func triggerScriptInit(l *lua.LState) {
 		return 1
 	})
 	luaRegister(l, "playerno", func(*lua.LState) int {
-		l.Push(lua.LNumber(sys.debugWC.playerNo+1))
+		l.Push(lua.LNumber(sys.debugWC.playerNo + 1))
 		return 1
 	})
 	luaRegister(l, "ratiolevel", func(*lua.LState) int {
@@ -3288,7 +3288,7 @@ func debugScriptInit(l *lua.LState, file string) error {
 		} else {
 			pn := sys.debugRef[0]
 			hn := sys.debugRef[1]
-			for i := hn+1; i <= len(sys.chars[pn]); i++ {
+			for i := hn + 1; i <= len(sys.chars[pn]); i++ {
 				hn = i
 				if hn >= len(sys.chars[pn]) {
 					pn += 1
