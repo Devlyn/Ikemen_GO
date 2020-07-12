@@ -31,11 +31,13 @@ const (
 func init() {
 	runtime.LockOSThread()
 }
+
 func chk(err error) {
 	if err != nil {
 		panic(err)
 	}
 }
+
 func createLog(p string) *os.File {
 	//fmt.Println("Creating log")
 	if !fileExists(p) {

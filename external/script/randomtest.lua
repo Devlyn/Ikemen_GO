@@ -247,7 +247,7 @@ end
 -- This is executed first
 function randomtest.run()
   randomtest.init()
-  refresh()
+  callGoRefresh()
   while not esc() do
     randomtest.randSel(1, winner)
     randomtest.randSel(2, winner)

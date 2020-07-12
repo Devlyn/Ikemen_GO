@@ -1,3 +1,5 @@
+require('external.script.util.dump')
+require('external.script.common.common')
 
 local storyboard = {}
 
@@ -102,7 +104,7 @@ local function f_play(t)
 				--	end
 				--end
 				main.f_cmdInput()
-				refresh()
+				callGoRefresh()
 			end
 		end
 	end
@@ -290,9 +292,9 @@ local function f_parse(path)
 	t = main.f_tableMerge(t_default, t)
 	--scenedef spr
 	if not t.scenedef.spr:match('^data/') then
-		if main.f_fileExists(t.fileDir .. t.scenedef.spr) then
+		if f_fileExists(t.fileDir .. t.scenedef.spr) then
 			t.scenedef.spr = t.fileDir .. t.scenedef.spr
-		elseif main.f_fileExists('data/' .. t.scenedef.spr) then
+		elseif f_fileExists('data/' .. t.scenedef.spr) then
 			t.scenedef.spr = 'data/' .. t.scenedef.spr
 		end
 	end
@@ -300,9 +302,9 @@ local function f_parse(path)
 	--scenedef snd
 	if t.scenedef.snd ~= '' then
 		if not t.scenedef.snd:match('^data/') then
-			if main.f_fileExists(t.fileDir .. t.scenedef.snd) then
+			if f_fileExists(t.fileDir .. t.scenedef.snd) then
 				t.scenedef.snd = t.fileDir .. t.scenedef.snd
-			elseif main.f_fileExists('data/' .. t.scenedef.snd) then
+			elseif f_fileExists('data/' .. t.scenedef.snd) then
 				t.scenedef.snd = 'data/' .. t.scenedef.snd
 			end
 		end
@@ -314,9 +316,9 @@ local function f_parse(path)
 		--bgm
 		if t.scene[k].bgm ~= nil then
 			if t.scene[k].bgm:match('^data/') then
-			elseif main.f_fileExists(t.fileDir .. t.scene[k].bgm) then
+			elseif f_fileExists(t.fileDir .. t.scene[k].bgm) then
 				t.scene[k].bgm = t.fileDir .. t.scene[k].bgm
-			elseif main.f_fileExists('music/' .. t.scene[k].bgm) then
+			elseif f_fileExists('music/' .. t.scene[k].bgm) then
 				t.scene[k].bgm = 'music/' .. t.scene[k].bgm
 			end
 		end

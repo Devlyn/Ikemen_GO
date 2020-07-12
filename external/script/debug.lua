@@ -1,13 +1,12 @@
 --;===========================================================
 --; HOTKEYS
 --;===========================================================
---One-time load of the json routines
-json = (loadfile 'external/script/dkjson.lua')()
+require('external.script.common.common')
+require('external.script.objects.config')
 
 -- Data loading from config.json
-local file = io.open("save/config.json","r")
-config = json.decode(file:read("*all"))
-file:close()
+local config = getConfig()
+
 -- This is done to get the AI level config
 if getAllowDebugKeys() then
 	--key, ctrl, alt, shift, function

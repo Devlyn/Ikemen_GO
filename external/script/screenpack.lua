@@ -1,6 +1,9 @@
 -- Screenpack config file
+require('external.script.util.dump')
+require('external.script.common.common')
+require('external.script.objects.config')
 
-require('external.script.dump')
+local config = getConfig()
 
 function main.IntLocalcoordValues()
 	main.SP_Localcoord = {}

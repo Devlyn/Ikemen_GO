@@ -3,6 +3,10 @@
 --;===========================================================
 --This pre-made table (3/4 of the whole file) contains all default values used in screenpack. New table from parsed DEF file is merged on top of this one.
 --This is important because there are more params available in Ikemen. Whole screenpack code refers to these values.
+require('external.script.common.common')
+
+local config = getConfig()
+
 local motif =
 {
 	def = main.motifDef,
@@ -2016,7 +2020,7 @@ for i = 1, #t_dir do
 	end
 	if not skip then
 		for j = 1, #t_dir[i].dirs do
-			if main.f_fileExists(t_dir[i].dirs[j]) then
+			if f_fileExists(t_dir[i].dirs[j]) then
 				motif[t_dir[i].t[1]][t_dir[i].t[2]] = t_dir[i].dirs[j]
 				break
 			end
@@ -2222,7 +2226,7 @@ local t_cmdItems = {
 	motif.select_info.teammenu_key_accept,
 }
 for k, v in ipairs(t_cmdItems) do
-	for i, cmd in ipairs (main.f_extractKeys(v)) do
+	for i, cmd in ipairs (f_extractKeys(v)) do
 		main.f_commandAdd(cmd)
 	end
 end

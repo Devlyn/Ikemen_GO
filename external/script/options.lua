@@ -1,11 +1,15 @@
+require('external.script.util.dump')
+require('external.script.common.common')
+require('external.script.objects.config')
 
+--;===========================================================
+--; Local variables
+--;===========================================================
 local options = {}
-require('external.script.dump')
---;===========================================================
---; COMMON
---;===========================================================
 local modified = 0
 local needReload = 0
+local config = getConfig()
+
 
 main.framesPerCount = getFramesPerCount()
 if config.RoundsNumSingle == -1 then
@@ -48,18 +52,7 @@ function options.f_precision(v, decimal)
 	return tonumber(string.format(decimal, v))
 end
 
---save configuration
-function options.f_saveCfg()
-	--Data saving to config.json
-	local file = io.open("save/config.json","w+")
-	file:write(json.encode(config, {indent = true}))
-	file:close()
-	--Reload game if needed
-	if needReload == 1 then
-		main.f_warning(main.f_extractText(motif.warning_info.text_reload), motif.option_info, motif.optionbgdef)
-		os.exit()
-	end
-end
+
 
 --reset key settings
 function options.f_keyDefault()
@@ -407,7 +400,7 @@ function options.f_menuCommonDraw(cursorPosY, moveTxt, item, t, fadeType)
 	else
 		main.f_cmdInput()
 	end
-	refresh()
+	callGoRefresh()
 end
 
 --;===========================================================
@@ -548,7 +541,12 @@ options.t_itemname = {
 		if main.input({1, 2, 3, 4}, {'$F', '$B', 'pal', 's'}) then
 			sndPlay(motif.files.snd_data, motif.option_info.cancel_snd[1], motif.option_info.cancel_snd[2])
 			if modified == 1 then
-				options.f_saveCfg()
+				saveConfig()
+				--Reload game if needed
+				if needReload == 1 then
+					main.f_warning(main.f_extractText(motif.warning_info.text_reload), motif.option_info, motif.optionbgdef)
+					os.exit()
+				end
 			end
 			main.f_menuFade('option_info', 'fadeout', cursorPosY, moveTxt, item, t)
 			main.f_bgReset(motif.titlebgdef.bg)
@@ -1464,7 +1462,12 @@ function options.createMenu(tbl, bool_bgreset, bool_main)
 				sndPlay(motif.files.snd_data, motif.option_info.cancel_snd[1], motif.option_info.cancel_snd[2])
 				if bool_main then
 					if modified == 1 then
-						options.f_saveCfg()
+						saveConfig()
+						--Reload game if needed
+						if needReload == 1 then
+							main.f_warning(main.f_extractText(motif.warning_info.text_reload), motif.option_info, motif.optionbgdef)
+							os.exit()
+						end
 					end
 					main.f_menuFade('option_info', 'fadeout', cursorPosY, moveTxt, item, t)
 					main.f_bgReset(motif.titlebgdef.bg)
@@ -2156,7 +2159,7 @@ function options.f_keyCfg(cfgType, controller, title)
 			--draw layerno = 1 backgrounds
 			bgDraw(motif.optionbgdef.bg, true)
 			main.f_cmdInput()
-			refresh()
+			callGoRefresh()
 		end
 
 	end
@@ -2645,7 +2648,7 @@ function options.f_keyCfg(cfgType, controller, title)
 			--draw layerno = 1 backgrounds
 			bgDraw(motif.optionbgdef.bg, true)
 			main.f_cmdInput()
-			refresh()
+			callGoRefresh()
 		end
 	end
 end

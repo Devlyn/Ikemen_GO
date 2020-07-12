@@ -1,15 +1,21 @@
-require('external.script.dump')
-local start = {}
+require('external.script.util.dump')
+require('external.script.common.common')
+require('external.script.common.go')
+require('external.script.objects.config')
+require('external.script.objects.stats')
 
-setSelColRow(motif.select_info.columns, motif.select_info.rows)
+local start = {}
+local config = getConfig()
+local stats = getStats()
 
 --not used for now
 --setShowEmptyCells(motif.select_info.showemptyboxes)
 --setRandomSpr(motif.selectbgdef.spr_data, motif.select_info.cell_random_spr[1], motif.select_info.cell_random_spr[2], motif.select_info.cell_random_scale[1], motif.select_info.cell_random_scale[2])
 --setCellSpr(motif.selectbgdef.spr_data, motif.select_info.cell_bg_spr[1], motif.select_info.cell_bg_spr[2], motif.select_info.cell_bg_scale[1], motif.select_info.cell_bg_scale[2])
 
-setSelCellSize(motif.select_info.cell_size[1] + motif.select_info.cell_spacing[1], motif.select_info.cell_size[2] + motif.select_info.cell_spacing[2])
-setSelCellScale(motif.select_info.portrait_scale[1], motif.select_info.portrait_scale[2])
+setGoSelColRow(motif.select_info.columns, motif.select_info.rows)
+setGoSelCellSize(motif.select_info.cell_size[1] + motif.select_info.cell_spacing[1], motif.select_info.cell_size[2] + motif.select_info.cell_spacing[2])
+setGoSelCellScale(motif.select_info.portrait_scale[1], motif.select_info.portrait_scale[2])
 
 --default team count after starting the game
 local p1NumTurns = math.max(2, config.NumTurns[1])
@@ -593,12 +599,6 @@ t_sortRanking['netplaysurvivalcoop'] = t_sortRanking.survival
 t_sortRanking['bossrush'] = t_sortRanking.survival
 t_sortRanking['vs100kumite'] = t_sortRanking.survival
 
---data saving to stats.json
-function f_saveStats()
-	local file = io.open("save/stats.json","w+")
-	file:write(json.encode(stats, {indent = true}))
-	file:close()
-end
 
 --store saved data in save/stats.json
 function start.f_storeSavedData(mode, cleared)
@@ -612,7 +612,7 @@ function start.f_storeSavedData(mode, cleared)
 	local t = stats.modes[mode] --mode play time
 	t.playtime = (t.playtime or 0) + t_savedData.time.total / 60
 	if t_sortRanking[mode] == nil then
-		f_saveStats()
+		saveStats()
 		return --mode can't be cleared, so further data collecting is not needed 
 	end
 	if cleared then
@@ -640,7 +640,7 @@ function start.f_storeSavedData(mode, cleared)
 		t_sortRanking[mode],
 		motif.rankings.max_entries
 	)
-	f_saveStats()
+	saveStats()
 end
 
 --set end match clearance flags (currently used to prevent end match fading based on various factors, if smooth screen transition is needed)
@@ -1745,7 +1745,7 @@ function start.f_selectSimple()
 			if start.f_result(gameMode()) == nil then break end
 			start.f_selectReset()
 			--main.f_cmdInput()
-			refresh()
+			callGoRefresh()
 		end
 		esc(false) --reset ESC
 		if gameMode() == 'netplayversus' then
@@ -1835,7 +1835,7 @@ function start.f_select4pSimple()
 			if start.f_result(gameMode()) == nil then break end
 			start.f_selectReset()
 			--main.f_cmdInput()
-			refresh()
+			callGoRefresh()
 		end
 		esc(false) --reset ESC
 	end
@@ -1973,7 +1973,7 @@ function start.f_selectArranged()
 				return
 			end
 			--main.f_cmdInput()
-			refresh()
+			callGoRefresh()
 		end
 		esc(false) --reset ESC
 		if gameMode() == 'netplaysurvivalcoop' then
@@ -2169,7 +2169,7 @@ function start.f_selectArcade()
 						--store saved data in save/stats.json
 						start.f_storeSavedData(gameMode(), false)
 						--game over
-						if motif.continue_screen.external_gameover == 1 and main.f_fileExists(motif.game_over_screen.storyboard) then
+						if motif.continue_screen.external_gameover == 1 and f_fileExists(motif.game_over_screen.storyboard) then
 							storyboard.f_storyboard(motif.game_over_screen.storyboard)
 						end
 						--intro
@@ -2197,7 +2197,7 @@ function start.f_selectArcade()
 				restoreTeam = false
 			end
 			--main.f_cmdInput()
-			refresh()
+			callGoRefresh()
 		end
 		esc(false) --reset ESC
 		if gameMode() == 'netplayteamcoop' then
@@ -2333,7 +2333,7 @@ function start.f_selectTournamentScreen(size)
 	else
 		main.f_cmdInput()
 	end
-	refresh()
+	callGoRefresh()
 end
 
 --;===========================================================
@@ -2501,7 +2501,7 @@ function start.f_selectScreen()
 			for n = #t_portrait, 1, -1 do
 				drawPortrait(
 					t_portrait[n],
-					motif.select_info.p1_face_offset[1] + motif.select_info['p1_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p1_face_spacing[1] + main.f_alignOffset(motif.select_info.p1_face_facing),
+					motif.select_info.p1_face_offset[1] + motif.select_info['p1_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p1_face_spacing[1] + alignOffset(motif.select_info.p1_face_facing),
 					motif.select_info.p1_face_offset[2] + motif.select_info['p1_c' .. n .. '_face_offset'][2] + (n - 1) * motif.select_info.p1_face_spacing[2],
 					motif.select_info.p1_face_facing * motif.select_info.p1_face_scale[1] * motif.select_info['p1_c' .. n .. '_face_scale'][1],
 					motif.select_info.p1_face_scale[2] * motif.select_info['p1_c' .. n .. '_face_scale'][2],
@@ -2541,7 +2541,7 @@ function start.f_selectScreen()
 			for n = #t_portrait, 1, -1 do
 				drawPortrait(
 					t_portrait[n],
-					motif.select_info.p2_face_offset[1] + motif.select_info['p2_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p2_face_spacing[1] + main.f_alignOffset(motif.select_info.p2_face_facing),
+					motif.select_info.p2_face_offset[1] + motif.select_info['p2_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p2_face_spacing[1] + alignOffset(motif.select_info.p2_face_facing),
 					motif.select_info.p2_face_offset[2] + motif.select_info['p2_c' .. n .. '_face_offset'][2] + (n - 1) * motif.select_info.p2_face_spacing[2],
 					motif.select_info.p2_face_facing * motif.select_info.p2_face_scale[1] * motif.select_info['p2_c' .. n .. '_face_scale'][1],
 					motif.select_info.p2_face_scale[2] * motif.select_info['p2_c' .. n .. '_face_scale'][2],
@@ -2782,6 +2782,8 @@ function start.f_4pselectScreen()
 	p3NumChars = 1
 	p4NumChars = 1
 
+	-- Need to set team mode to be able to get proper amount of characters
+	-- todo	Dev refactor start.lua
 	if gameMode('4pversus') then
 		p1TeamMode = main.p1TeamMenu.mode
 		p2TeamMode = main.p2TeamMenu.mode
@@ -2846,7 +2848,7 @@ function start.f_4pselectScreen()
 			for n = #t_portrait, 1, -1 do
 				drawPortrait(
 						t_portrait[n],
-						motif.select_info.p1_face_offset[1] + motif.select_info['p1_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p1_face_spacing[1] + main.f_alignOffset(motif.select_info.p1_face_facing),
+						motif.select_info.p1_face_offset[1] + motif.select_info['p1_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p1_face_spacing[1] + alignOffset(motif.select_info.p1_face_facing),
 						motif.select_info.p1_face_offset[2] + motif.select_info['p1_c' .. n .. '_face_offset'][2] + (n - 1) * motif.select_info.p1_face_spacing[2],
 						motif.select_info.p1_face_facing * motif.select_info.p1_face_scale[1] * motif.select_info['p1_c' .. n .. '_face_scale'][1],
 						motif.select_info.p1_face_scale[2] * motif.select_info['p1_c' .. n .. '_face_scale'][2],
@@ -2886,7 +2888,7 @@ function start.f_4pselectScreen()
 			for n = #t_portrait, 1, -1 do
 				drawPortrait(
 						t_portrait[n],
-						motif.select_info.p2_face_offset[1] + motif.select_info['p2_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p2_face_spacing[1] + main.f_alignOffset(motif.select_info.p2_face_facing),
+						motif.select_info.p2_face_offset[1] + motif.select_info['p2_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p2_face_spacing[1] + alignOffset(motif.select_info.p2_face_facing),
 						motif.select_info.p2_face_offset[2] + motif.select_info['p2_c' .. n .. '_face_offset'][2] + (n - 1) * motif.select_info.p2_face_spacing[2],
 						motif.select_info.p2_face_facing * motif.select_info.p2_face_scale[1] * motif.select_info['p2_c' .. n .. '_face_scale'][1],
 						motif.select_info.p2_face_scale[2] * motif.select_info['p2_c' .. n .. '_face_scale'][2],
@@ -2926,7 +2928,7 @@ function start.f_4pselectScreen()
 			for n = #t_portrait, 1, -1 do
 				drawPortrait(
 						t_portrait[n],
-						motif.select_info.p3_face_offset[1] + motif.select_info['p3_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p3_face_spacing[1] + main.f_alignOffset(motif.select_info.p3_face_facing),
+						motif.select_info.p3_face_offset[1] + motif.select_info['p3_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p3_face_spacing[1] + alignOffset(motif.select_info.p3_face_facing),
 						motif.select_info.p3_face_offset[2] + motif.select_info['p3_c' .. n .. '_face_offset'][2] + (n - 1) * motif.select_info.p3_face_spacing[2],
 						motif.select_info.p3_face_facing * motif.select_info.p3_face_scale[1] * motif.select_info['p3_c' .. n .. '_face_scale'][1],
 						motif.select_info.p3_face_scale[2] * motif.select_info['p3_c' .. n .. '_face_scale'][2],
@@ -2966,7 +2968,7 @@ function start.f_4pselectScreen()
 			for n = #t_portrait, 1, -1 do
 				drawPortrait(
 						t_portrait[n],
-						motif.select_info.p4_face_offset[1] + motif.select_info['p4_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p4_face_spacing[1] + main.f_alignOffset(motif.select_info.p4_face_facing),
+						motif.select_info.p4_face_offset[1] + motif.select_info['p4_c' .. n .. '_face_offset'][1] + (n - 1) * motif.select_info.p4_face_spacing[1] + alignOffset(motif.select_info.p4_face_facing),
 						motif.select_info.p4_face_offset[2] + motif.select_info['p4_c' .. n .. '_face_offset'][2] + (n - 1) * motif.select_info.p4_face_spacing[2],
 						motif.select_info.p4_face_facing * motif.select_info.p4_face_scale[1] * motif.select_info['p4_c' .. n .. '_face_scale'][1],
 						motif.select_info.p4_face_scale[2] * motif.select_info['p4_c' .. n .. '_face_scale'][2],
@@ -3235,7 +3237,7 @@ function start.f_4pselectScreen()
 			if gameMode("4pversus") then
 				-- In versus P3 selection belongs in p1 roster
 				-- todo	Dev: Need to refactor this to be more clear
-				if #t_p1Selected < (p1NumChars + p3NumChars) then
+				if #t_p1Selected < 2 then
 					print("Inserting P3 character to p1 table for VS")
 					table.insert(t_p1Selected, {
 						ref = t_p3Selected[1].ref,
@@ -3245,7 +3247,7 @@ function start.f_4pselectScreen()
 					})
 				end
 				-- P4 selections belongs in p2 roster
-				if #t_p2Selected < (p2NumChars + p4NumChars) then
+				if #t_p2Selected < 2 then
 					print("Inserting P4 character to p2 table for VS")
 					table.insert(t_p2Selected, {
 						ref = t_p4Selected[1].ref,
@@ -3258,7 +3260,7 @@ function start.f_4pselectScreen()
 			elseif gameMode('4pcoop') then
 				-- In coop all selected characters belong to player one roster
 				-- todo: Dev: Need to update this to work seperately
-				if #t_p1Selected < (p1NumChars + p3NumChars + p2NumChars + p4NumChars) then
+				if #t_p1Selected < 4 then
 					print("Inserting P2 character to p1 table for coop")
 					table.insert(t_p1Selected, {
 						ref = t_p2Selected[1].ref,
@@ -3401,7 +3403,7 @@ function start.f_p1TeamMenu()
 		p1TeamEnd = true
 	else
 		--Calculate team cursor position
-		if main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_previous)) then
+		if main.input({1}, f_extractKeys(motif.select_info.teammenu_key_previous)) then
 			if p1TeamMenu > 1 then
 				sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_move_snd[1], motif.select_info.p1_teammenu_move_snd[2])
 				p1TeamMenu = p1TeamMenu - 1
@@ -3409,7 +3411,7 @@ function start.f_p1TeamMenu()
 				sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_move_snd[1], motif.select_info.p1_teammenu_move_snd[2])
 				p1TeamMenu = #t_p1TeamMenu
 			end
-		elseif main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_next)) then
+		elseif main.input({1}, f_extractKeys(motif.select_info.teammenu_key_next)) then
 			if p1TeamMenu < #t_p1TeamMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_move_snd[1], motif.select_info.p1_teammenu_move_snd[2])
 				p1TeamMenu = p1TeamMenu + 1
@@ -3418,50 +3420,50 @@ function start.f_p1TeamMenu()
 				p1TeamMenu = 1
 			end
 		elseif t_p1TeamMenu[p1TeamMenu].itemname == 'simul' then
-			if main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			if main.input({1}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p1NumSimul > config.NumSimul[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_value_snd[1], motif.select_info.p1_teammenu_value_snd[2])
 					p1NumSimul = p1NumSimul - 1
 				end
-			elseif main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			elseif main.input({1}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p1NumSimul < config.NumSimul[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_value_snd[1], motif.select_info.p1_teammenu_value_snd[2])
 					p1NumSimul = p1NumSimul + 1
 				end
 			end
 		elseif t_p1TeamMenu[p1TeamMenu].itemname == 'turns' then
-			if main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			if main.input({1}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p1NumTurns > config.NumTurns[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_value_snd[1], motif.select_info.p1_teammenu_value_snd[2])
 					p1NumTurns = p1NumTurns - 1
 				end
-			elseif main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			elseif main.input({1}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p1NumTurns < config.NumTurns[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_value_snd[1], motif.select_info.p1_teammenu_value_snd[2])
 					p1NumTurns = p1NumTurns + 1
 				end
 			end
 		elseif t_p1TeamMenu[p1TeamMenu].itemname == 'tag' then
-			if main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			if main.input({1}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p1NumTag > config.NumTag[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_value_snd[1], motif.select_info.p1_teammenu_value_snd[2])
 					p1NumTag = p1NumTag - 1
 				end
-			elseif main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			elseif main.input({1}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p1NumTag < config.NumTag[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_value_snd[1], motif.select_info.p1_teammenu_value_snd[2])
 					p1NumTag = p1NumTag + 1
 				end
 			end
 		elseif t_p1TeamMenu[p1TeamMenu].itemname == 'ratio' then
-			if main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			if main.input({1}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_value_snd[1], motif.select_info.p1_teammenu_value_snd[2])
 				if p1NumRatio > 1 then
 					p1NumRatio = p1NumRatio - 1
 				else
 					p1NumRatio = 7
 				end
-			elseif main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			elseif main.input({1}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_value_snd[1], motif.select_info.p1_teammenu_value_snd[2])
 				if p1NumRatio < 7 then
 					p1NumRatio = p1NumRatio + 1
@@ -3590,7 +3592,7 @@ function start.f_p1TeamMenu()
 			end
 		end
 		--Confirmed team selection
-		if main.input({1}, main.f_extractKeys(motif.select_info.teammenu_key_accept)) then
+		if main.input({1}, f_extractKeys(motif.select_info.teammenu_key_accept)) then
 			sndPlay(motif.files.snd_data, motif.select_info.p1_teammenu_done_snd[1], motif.select_info.p1_teammenu_done_snd[2])
 			if t_p1TeamMenu[p1TeamMenu].itemname == 'single' then
 				p1TeamMode = 0
@@ -3692,7 +3694,7 @@ function start.f_p2TeamMenu()
 			cmd = 1
 		end
 		--Calculate team cursor position
-		if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_previous)) then
+		if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_previous)) then
 			if p2TeamMenu > 1 then
 				sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_move_snd[1], motif.select_info.p2_teammenu_move_snd[2])
 				p2TeamMenu = p2TeamMenu - 1
@@ -3700,7 +3702,7 @@ function start.f_p2TeamMenu()
 				sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_move_snd[1], motif.select_info.p2_teammenu_move_snd[2])
 				p2TeamMenu = #t_p2TeamMenu
 			end
-		elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_next)) then
+		elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_next)) then
 			if p2TeamMenu < #t_p2TeamMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_move_snd[1], motif.select_info.p2_teammenu_move_snd[2])
 				p2TeamMenu = p2TeamMenu + 1
@@ -3709,50 +3711,50 @@ function start.f_p2TeamMenu()
 				p2TeamMenu = 1
 			end
 		elseif t_p2TeamMenu[p2TeamMenu].itemname == 'simul' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p2NumSimul > config.NumSimul[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_value_snd[1], motif.select_info.p2_teammenu_value_snd[2])
 					p2NumSimul = p2NumSimul - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p2NumSimul < config.NumSimul[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_value_snd[1], motif.select_info.p2_teammenu_value_snd[2])
 					p2NumSimul = p2NumSimul + 1
 				end
 			end
 		elseif t_p2TeamMenu[p2TeamMenu].itemname == 'turns' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p2NumTurns > config.NumTurns[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_value_snd[1], motif.select_info.p2_teammenu_value_snd[2])
 					p2NumTurns = p2NumTurns - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p2NumTurns < config.NumTurns[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_value_snd[1], motif.select_info.p2_teammenu_value_snd[2])
 					p2NumTurns = p2NumTurns + 1
 				end
 			end
 		elseif t_p2TeamMenu[p2TeamMenu].itemname == 'tag' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p2NumTag > config.NumTag[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_value_snd[1], motif.select_info.p2_teammenu_value_snd[2])
 					p2NumTag = p2NumTag - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p2NumTag < config.NumTag[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_value_snd[1], motif.select_info.p2_teammenu_value_snd[2])
 					p2NumTag = p2NumTag + 1
 				end
 			end
 		elseif t_p2TeamMenu[p2TeamMenu].itemname == 'ratio' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) and main.p2SelectMenu then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) and main.p2SelectMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_value_snd[1], motif.select_info.p2_teammenu_value_snd[2])
 				if p2NumRatio > 1 then
 					p2NumRatio = p2NumRatio - 1
 				else
 					p2NumRatio = 7
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) and main.p2SelectMenu then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) and main.p2SelectMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_value_snd[1], motif.select_info.p2_teammenu_value_snd[2])
 				if p2NumRatio < 7 then
 					p2NumRatio = p2NumRatio + 1
@@ -3887,7 +3889,7 @@ function start.f_p2TeamMenu()
 			end
 		end
 		--Confirmed team selection
-		if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_accept)) then
+		if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_accept)) then
 			sndPlay(motif.files.snd_data, motif.select_info.p2_teammenu_done_snd[1], motif.select_info.p2_teammenu_done_snd[2])
 			if t_p2TeamMenu[p2TeamMenu].itemname == 'single' then
 				p2TeamMode = 0
@@ -3989,7 +3991,7 @@ function start.f_p3TeamMenu()
 			cmd = 5
 		end
 		--Calculate team cursor position
-		if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_previous)) then
+		if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_previous)) then
 			if p3TeamMenu > 1 then
 				sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_move_snd[1], motif.select_info.p3_teammenu_move_snd[2])
 				p3TeamMenu = p3TeamMenu - 1
@@ -3997,7 +3999,7 @@ function start.f_p3TeamMenu()
 				sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_move_snd[1], motif.select_info.p3_teammenu_move_snd[2])
 				p3TeamMenu = #t_p3TeamMenu
 			end
-		elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_next)) then
+		elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_next)) then
 			if p3TeamMenu < #t_p3TeamMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_move_snd[1], motif.select_info.p3_teammenu_move_snd[2])
 				p3TeamMenu = p3TeamMenu + 1
@@ -4006,50 +4008,50 @@ function start.f_p3TeamMenu()
 				p3TeamMenu = 1
 			end
 		elseif t_p3TeamMenu[p3TeamMenu].itemname == 'simul' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p3NumSimul > config.NumSimul[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_value_snd[1], motif.select_info.p3_teammenu_value_snd[2])
 					p3NumSimul = p3NumSimul - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p3NumSimul < config.NumSimul[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_value_snd[1], motif.select_info.p3_teammenu_value_snd[2])
 					p3NumSimul = p3NumSimul + 1
 				end
 			end
 		elseif t_p3TeamMenu[p3TeamMenu].itemname == 'turns' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p3NumTurns > config.NumTurns[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_value_snd[1], motif.select_info.p3_teammenu_value_snd[2])
 					p3NumTurns = p3NumTurns - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p3NumTurns < config.NumTurns[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_value_snd[1], motif.select_info.p3_teammenu_value_snd[2])
 					p3NumTurns = p3NumTurns + 1
 				end
 			end
 		elseif t_p3TeamMenu[p3TeamMenu].itemname == 'tag' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p3NumTag > config.NumTag[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_value_snd[1], motif.select_info.p3_teammenu_value_snd[2])
 					p3NumTag = p3NumTag - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p3NumTag < config.NumTag[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_value_snd[1], motif.select_info.p3_teammenu_value_snd[2])
 					p3NumTag = p3NumTag + 1
 				end
 			end
 		elseif t_p3TeamMenu[p3TeamMenu].itemname == 'ratio' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) and main.p3SelectMenu then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) and main.p3SelectMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_value_snd[1], motif.select_info.p3_teammenu_value_snd[2])
 				if p3NumRatio > 1 then
 					p3NumRatio = p3NumRatio - 1
 				else
 					p3NumRatio = 7
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) and main.p3SelectMenu then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) and main.p3SelectMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_value_snd[1], motif.select_info.p3_teammenu_value_snd[2])
 				if p3NumRatio < 7 then
 					p3NumRatio = p3NumRatio + 1
@@ -4184,7 +4186,7 @@ function start.f_p3TeamMenu()
 			end
 		end
 		--Confirmed team selection
-		if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_accept)) then
+		if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_accept)) then
 			sndPlay(motif.files.snd_data, motif.select_info.p3_teammenu_done_snd[1], motif.select_info.p3_teammenu_done_snd[2])
 			if t_p3TeamMenu[p3TeamMenu].itemname == 'single' then
 				p3TeamMode = 0
@@ -4287,7 +4289,7 @@ function start.f_p4TeamMenu()
 			cmd = 7
 		end
 		--Calculate team cursor position
-		if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_previous)) then
+		if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_previous)) then
 			if p4TeamMenu > 1 then
 				sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_move_snd[1], motif.select_info.p4_teammenu_move_snd[2])
 				p4TeamMenu = p4TeamMenu - 1
@@ -4295,7 +4297,7 @@ function start.f_p4TeamMenu()
 				sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_move_snd[1], motif.select_info.p4_teammenu_move_snd[2])
 				p4TeamMenu = #t_p4TeamMenu
 			end
-		elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_next)) then
+		elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_next)) then
 			if p4TeamMenu < #t_p4TeamMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_move_snd[1], motif.select_info.p4_teammenu_move_snd[2])
 				p4TeamMenu = p4TeamMenu + 1
@@ -4304,50 +4306,50 @@ function start.f_p4TeamMenu()
 				p4TeamMenu = 1
 			end
 		elseif t_p4TeamMenu[p4TeamMenu].itemname == 'simul' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p4NumSimul > config.NumSimul[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_value_snd[1], motif.select_info.p4_teammenu_value_snd[2])
 					p4NumSimul = p4NumSimul - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p4NumSimul < config.NumSimul[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_value_snd[1], motif.select_info.p4_teammenu_value_snd[2])
 					p4NumSimul = p4NumSimul + 1
 				end
 			end
 		elseif t_p4TeamMenu[p4TeamMenu].itemname == 'turns' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p4NumTurns > config.NumTurns[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_value_snd[1], motif.select_info.p4_teammenu_value_snd[2])
 					p4NumTurns = p4NumTurns - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p4NumTurns < config.NumTurns[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_value_snd[1], motif.select_info.p4_teammenu_value_snd[2])
 					p4NumTurns = p4NumTurns + 1
 				end
 			end
 		elseif t_p4TeamMenu[p4TeamMenu].itemname == 'tag' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) then
 				if p4NumTag > config.NumTag[1] then
 					sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_value_snd[1], motif.select_info.p4_teammenu_value_snd[2])
 					p4NumTag = p4NumTag - 1
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) then
 				if p4NumTag < config.NumTag[2] then
 					sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_value_snd[1], motif.select_info.p4_teammenu_value_snd[2])
 					p4NumTag = p4NumTag + 1
 				end
 			end
 		elseif t_p4TeamMenu[p4TeamMenu].itemname == 'ratio' then
-			if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_subtract)) and main.p4SelectMenu then
+			if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_subtract)) and main.p4SelectMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_value_snd[1], motif.select_info.p4_teammenu_value_snd[2])
 				if p4NumRatio > 1 then
 					p4NumRatio = p4NumRatio - 1
 				else
 					p4NumRatio = 7
 				end
-			elseif main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_add)) and main.p4SelectMenu then
+			elseif main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_add)) and main.p4SelectMenu then
 				sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_value_snd[1], motif.select_info.p4_teammenu_value_snd[2])
 				if p4NumRatio < 7 then
 					p4NumRatio = p4NumRatio + 1
@@ -4482,7 +4484,7 @@ function start.f_p4TeamMenu()
 			end
 		end
 		--Confirmed team selection
-		if main.input({cmd}, main.f_extractKeys(motif.select_info.teammenu_key_accept)) then
+		if main.input({cmd}, f_extractKeys(motif.select_info.teammenu_key_accept)) then
 			sndPlay(motif.files.snd_data, motif.select_info.p4_teammenu_done_snd[1], motif.select_info.p4_teammenu_done_snd[2])
 			if t_p4TeamMenu[p4TeamMenu].itemname == 'single' then
 				p4TeamMode = 0
@@ -5274,7 +5276,7 @@ function start.f_selectVersus()
 				end
 				drawVersusPortrait(
 					t_portrait[i],
-					motif.vs_screen.p1_pos[1] + motif.vs_screen.p1_offset[1] + motif.vs_screen['p1_c' .. i .. '_offset'][1] + (i - 1) * motif.vs_screen.p1_spacing[1] + main.f_alignOffset(motif.vs_screen.p1_facing) + math.floor(t_p1_slide_dist[1] + 0.5),
+					motif.vs_screen.p1_pos[1] + motif.vs_screen.p1_offset[1] + motif.vs_screen['p1_c' .. i .. '_offset'][1] + (i - 1) * motif.vs_screen.p1_spacing[1] + alignOffset(motif.vs_screen.p1_facing) + math.floor(t_p1_slide_dist[1] + 0.5),
 					motif.vs_screen.p1_pos[2] + motif.vs_screen.p1_offset[2] + motif.vs_screen['p1_c' .. i .. '_offset'][2] + (i - 1) * motif.vs_screen.p1_spacing[2] +  math.floor(t_p1_slide_dist[2] + 0.5),
 					motif.vs_screen.p1_facing * motif.vs_screen.p1_scale[1] * motif.vs_screen['p1_c' .. i .. '_scale'][1],
 					motif.vs_screen.p1_scale[2] * motif.vs_screen['p1_c' .. i .. '_scale'][2],
@@ -5300,7 +5302,7 @@ function start.f_selectVersus()
 				end
 				drawVersusPortrait(
 					t_portrait[i],
-					motif.vs_screen.p2_pos[1] + motif.vs_screen.p2_offset[1] + motif.vs_screen['p2_c' .. i .. '_offset'][1] + (i - 1) * motif.vs_screen.p2_spacing[1] + main.f_alignOffset(motif.vs_screen.p2_facing) + math.floor(t_p2_slide_dist[1] + 0.5),
+					motif.vs_screen.p2_pos[1] + motif.vs_screen.p2_offset[1] + motif.vs_screen['p2_c' .. i .. '_offset'][1] + (i - 1) * motif.vs_screen.p2_spacing[1] + alignOffset(motif.vs_screen.p2_facing) + math.floor(t_p2_slide_dist[1] + 0.5),
 					motif.vs_screen.p2_pos[2] + motif.vs_screen.p2_offset[2] + motif.vs_screen['p2_c' .. i .. '_offset'][2] + (i - 1) * motif.vs_screen.p2_spacing[2] + math.floor(t_p2_slide_dist[2] + 0.5),
 					motif.vs_screen.p2_facing * motif.vs_screen.p2_scale[1] * motif.vs_screen['p2_c' .. i .. '_scale'][1],
 					motif.vs_screen.p2_scale[2] * motif.vs_screen['p2_c' .. i .. '_scale'][2],
@@ -5378,7 +5380,6 @@ function start.f_4pselectVersus()
 		start.f_selectChar(2, t_p2Selected)
 		return true
 	else
-		print("else statement reached")
 		local text = main.f_extractText(motif.vs_screen.match_text, matchNo)
 		txt_matchNo:update({text = text[1]})
 		main.f_bgReset(motif.versusbgdef.bg)
@@ -5391,7 +5392,6 @@ function start.f_4pselectVersus()
 		local t_p1_slide_dist = {0, 0}
 		local t_p2_slide_dist = {0, 0}
 		local orderTime = 0
-		print(#t_p1Selected)
 		if main.p1In == 1 and main.p2In == 2 and (#t_p1Selected > 1 or #t_p2Selected > 1) and not main.coop then
 			print("First if statement reached!!")
 			orderTime = math.max(#t_p1Selected, #t_p2Selected) - 1 * motif.vs_screen.time_order
@@ -5573,7 +5573,7 @@ function start.f_4pselectVersus()
 				end
 				drawVersusPortrait(
 						t_portrait[i],
-						motif.vs_screen.p1_pos[1] + motif.vs_screen.p1_offset[1] + motif.vs_screen['p1_c' .. i .. '_offset'][1] + (i - 1) * motif.vs_screen.p1_spacing[1] + main.f_alignOffset(motif.vs_screen.p1_facing) + math.floor(t_p1_slide_dist[1] + 0.5),
+						motif.vs_screen.p1_pos[1] + motif.vs_screen.p1_offset[1] + motif.vs_screen['p1_c' .. i .. '_offset'][1] + (i - 1) * motif.vs_screen.p1_spacing[1] + alignOffset(motif.vs_screen.p1_facing) + math.floor(t_p1_slide_dist[1] + 0.5),
 						motif.vs_screen.p1_pos[2] + motif.vs_screen.p1_offset[2] + motif.vs_screen['p1_c' .. i .. '_offset'][2] + (i - 1) * motif.vs_screen.p1_spacing[2] +  math.floor(t_p1_slide_dist[2] + 0.5),
 						motif.vs_screen.p1_facing * motif.vs_screen.p1_scale[1] * motif.vs_screen['p1_c' .. i .. '_scale'][1],
 						motif.vs_screen.p1_scale[2] * motif.vs_screen['p1_c' .. i .. '_scale'][2],
@@ -5599,7 +5599,7 @@ function start.f_4pselectVersus()
 				end
 				drawVersusPortrait(
 						t_portrait[i],
-						motif.vs_screen.p2_pos[1] + motif.vs_screen.p2_offset[1] + motif.vs_screen['p2_c' .. i .. '_offset'][1] + (i - 1) * motif.vs_screen.p2_spacing[1] + main.f_alignOffset(motif.vs_screen.p2_facing) + math.floor(t_p2_slide_dist[1] + 0.5),
+						motif.vs_screen.p2_pos[1] + motif.vs_screen.p2_offset[1] + motif.vs_screen['p2_c' .. i .. '_offset'][1] + (i - 1) * motif.vs_screen.p2_spacing[1] + alignOffset(motif.vs_screen.p2_facing) + math.floor(t_p2_slide_dist[1] + 0.5),
 						motif.vs_screen.p2_pos[2] + motif.vs_screen.p2_offset[2] + motif.vs_screen['p2_c' .. i .. '_offset'][2] + (i - 1) * motif.vs_screen.p2_spacing[2] + math.floor(t_p2_slide_dist[2] + 0.5),
 						motif.vs_screen.p2_facing * motif.vs_screen.p2_scale[1] * motif.vs_screen['p2_c' .. i .. '_scale'][1],
 						motif.vs_screen.p2_scale[2] * motif.vs_screen['p2_c' .. i .. '_scale'][2],
@@ -6504,7 +6504,7 @@ function start.f_continue()
 		else
 			main.f_cmdInput()
 		end
-		refresh()
+		callGoRefresh()
 	end
 	lastMatchClear()
 	return continue

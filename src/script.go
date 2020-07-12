@@ -49,7 +49,7 @@ func toUserData(l *lua.LState, argi int) interface{} {
 	return nil
 }
 func userDataError(l *lua.LState, argi int, udtype interface{}) {
-	l.RaiseError("%v番目の引数が%Tではありません。", argi, udtype)
+	l.RaiseError("%v file has raised an error", argi, udtype)
 }
 
 type InputDialog interface {
