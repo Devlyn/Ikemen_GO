@@ -567,15 +567,18 @@ func (s *Sprite) SetPxl(px []byte) {
 		s.Tex = newTexture()
 		gl.BindTexture(gl.TEXTURE_2D, uint32(*s.Tex))
 		gl.PixelStorei(gl.UNPACK_ALIGNMENT, 1)
+		//gl.PixelStorei(gl.UNPACK_ROW_LENGTH, 0)
+		//gl.PixelStorei(gl.UNPACK_SKIP_PIXELS, 0)
+		//gl.PixelStorei(gl.UNPACK_SKIP_ROWS, 0)
 		p := unsafe.Pointer(nil)
 		if len(px) > 0 {
 			p = unsafe.Pointer(&px[0])
 		}
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, int32(s.Size[0]), int32(s.Size[1]), 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, p)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP)
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, int32(s.Size[0]), int32(s.Size[1]), 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, p)
 		gl.Disable(gl.TEXTURE_2D)
 	}
 }

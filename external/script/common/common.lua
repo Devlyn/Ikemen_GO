@@ -61,7 +61,7 @@ end
 
 -- return a file with given accesProperty
 -- @param motifFile the file to be retrieved
--- @param accesProperty the provided accesProperty (Read, Write)
+-- @param accesProperty the provided accesProperty (Read r, Write w+)
 function getFile(motifFile, accesProperty)
     local file = io.open(motifFile, accesProperty)
     local content = file:read("*all")

@@ -1,6 +1,6 @@
 #!/bin/sh
 cd ..
-export GOPATH=$PWD/go
+export GOPATH=$HOME/.gopkg
 export CGO_ENABLED=1
 
 case "$OSTYPE" in

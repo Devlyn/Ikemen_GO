@@ -15,7 +15,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/edolphin-ydf/gopherlua-debugger"
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/speaker"
 	"github.com/go-gl/gl/v3.3-compatibility/gl"
@@ -506,7 +505,6 @@ func (s *System) init(w, h int32) *lua.LState {
 	sr := beep.SampleRate(Mp3SampleRate)
 	speaker.Init(sr, sr.N(time.Second/10))
 	l := lua.NewState()
-	lua_debugger.Preload(l)
 	l.Options.IncludeGoStackTrace = true
 	l.OpenLibs()
 	for i := range s.inputRemap {

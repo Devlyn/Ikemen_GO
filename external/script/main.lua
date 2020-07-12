@@ -267,26 +267,26 @@ function text:create(t)
 		},
 		defsc = t.defsc or false
 	}
-	o.ti = textImgNew()
+	o.ti = callGoNewTextImage()
 	setmetatable(o, self)
 	self.__index = self
 	if o.font ~= -1 then
 		if main.font[o.font .. o.height] == nil then
-			main.font[o.font .. o.height] = fontNew(o.font, o.height)
+			main.font[o.font .. o.height] = callGoNewFont(o.font, o.height)
 		end
 		if main.font_def[o.font .. o.height] == nil then
-			main.font_def[o.font .. o.height] = fontGetDef(main.font[o.font .. o.height])
+			main.font_def[o.font .. o.height] = getGoFontDef(main.font[o.font .. o.height])
 		end
-		textImgSetFont(o.ti, main.font[o.font .. o.height])
+		setGoTextImageFont(o.ti, main.font[o.font .. o.height])
 	end
-	textImgSetBank(o.ti, o.bank)
-	textImgSetAlign(o.ti, o.align)
-	textImgSetText(o.ti, o.text)
-	textImgSetColor(o.ti, o.r, o.g, o.b, o.src, o.dst)
+	setGoTextImgBank(o.ti, o.bank)
+	setGoTextImageAlign(o.ti, o.align)
+	setGoTextImageText(o.ti, o.text)
+	setGoTextImageColor(o.ti, o.r, o.g, o.b, o.src, o.dst)
 	if o.defsc then main.SetDefaultScale() end
-	textImgSetPos(o.ti, o.x + alignOffset(o.align), o.y)
-	textImgSetScale(o.ti, o.scaleX, o.scaleY)
-	textImgSetWindow(o.ti, o.window[1], o.window[2], o.window[3], o.window[4])
+	setGoTextImagePosition(o.ti, o.x + alignOffset(o.align), o.y)
+	setGoTextImageScale(o.ti, o.scaleX, o.scaleY)
+	setGoTextImageWindow(o.ti, o.window[1], o.window[2], o.window[3], o.window[4])
 	if o.defsc then main.SetScaleValues() end
 	return o
 end
@@ -2661,7 +2661,7 @@ function main.f_demo(cursorPosY, moveTxt, item, t, fadeType)
 	end
 	main.f_default()
 	main.f_menuFade('demo_mode', 'fadeout', cursorPosY, moveTxt, item, t)
-	clearColor(motif.titlebgdef.bgclearcolor[1], motif.titlebgdef.bgclearcolor[2], motif.titlebgdef.bgclearcolor[3])
+	callGoClearColor(motif.titlebgdef.bgclearcolor[1], motif.titlebgdef.bgclearcolor[2], motif.titlebgdef.bgclearcolor[3])
 	if motif.demo_mode.fight_playbgm == 1 or motif.demo_mode.fight_stopbgm == 1 then
 		setAllowBGM(true)
 	else
@@ -2675,7 +2675,7 @@ function main.f_demo(cursorPosY, moveTxt, item, t, fadeType)
 	if motif.demo_mode.debuginfo == 0 and config.DebugKeys then
 		setAllowDebugKeys(false)
 	end
-	setGameMode('demo')
+	setGoGameMode('demo')
 	for i = 1, 2 do
 		setCom(i, 8)
 		setTeamMode(i, 0, 1)

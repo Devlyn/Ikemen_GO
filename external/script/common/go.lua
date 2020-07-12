@@ -1,5 +1,6 @@
 -- Handles all the go functions called by the lua scripts
 -- This script should be used rather than calling the Go function directly
+-- todo Dev: Differentiate between setters, getters and void functions
 
 
 -- Set selected column and row in the go engine
@@ -216,8 +217,122 @@ function callGoFadeScreen(fadeType, frame, length, rColor, gColor, bColor)
     )
 end
 
+-- call the game new text image function to create a new text image in the go engine
+function callGoNewTextImage()
+    return textImgNew()
+end
+
 -- call the game loadLifebar function to load a lifebar definition file in the go engine
 -- @param definitionFile the file to be loaded
 function callGoLoadLifeBar(definitionFile)
     return loadLifebar(definitionFile)
 end
+
+-- call the game set text image font to set the image font in the go engine
+-- @param textImage the provided textImage
+function setGoTextImageFont(textImage, fontTable) 
+    return textImgSetFont(textImage, fontTable)    
+end
+
+-- call the game set text image bank to set image bank in the go engine
+-- @param textImage the provided textImage
+-- @param bank
+function setGoTextImgBank(textImage, bank)
+    return textImgSetBank(textImage, bank)
+end
+
+-- call the game set text image align to set alignment in the go engine
+-- @param textImage the provided textImage
+function setGoTextImageAlign(textImage, alignMent)
+    return textImgSetAlign(textImage, alignMent)
+end
+
+-- call the game set text image text to set image text in the go engine
+-- @param textImage the provided textImage
+function setGoTextImageText(textImage, text)
+    return textImgSetText(textImage, text)
+end
+
+-- call the game set text image color to set image color in the go engine
+-- @param textImage the provided textImage
+function setGoTextImageColor(textImage, rColor, gColor, bColor, source, destination)
+    return textImgSetColor(textImage, rColor, gColor, bColor, source, destination)
+end
+
+-- call the game set text image position to set image position in the go engine
+-- @param textImage the provided textImage
+function setGoTextImagePosition(textImage, xAxis, yAxis)
+    return textImgSetPos(textImage, xAxis, yAxis)
+end
+
+-- call the game set text image scale to set image scale in the go engine
+-- @param textImage the provided textImage
+function setGoTextImageScale(textImage, xScale, yScale)
+    return textImgSetScale(textImage, xScale, yScale)
+end
+
+-- call the game set text image bank to set image bank in the go engine
+-- @param textImage the provided textImage
+function setGoTextImageWindow(textImage, xAxis, yAxis, width, height)
+    return textImgSetWindow(textImage, xAxis, yAxis, width, height)
+end
+
+-- call the game new font function to load a new font in the go engine
+function callGoNewFont(font, height)
+    return fontNew(font, height)
+end
+
+-- get the game font definition based on the provided font table in the go engine
+function getGoFontDef(fontTable)
+    return fontGetDef(fontTable)
+end
+
+-- set the game computer/input to provided value in the go engine
+-- @param player
+-- @param aiLevel the provided AI level, if set to 0 player is manually controlled
+function setGoCom(player, aiLevel)
+    return setCom(player, aiLevel)
+end
+
+-- set the game team mode to the provided value in the go engine
+-- @param team the side this change is applicable to, we only have 2 sides so the options are 1 or 2
+-- @param gameType the provided gameType which consists of: Single, Simul, Ratio and Tag
+-- @param playerAmount the amount of players, cannot exceed the max of the gameType
+function setGoTeamMode(team, gameType, playerAmount)
+    return setTeamMode(team, gameType, playerAmount)
+end
+
+-- set the game character to the provied values in the go engine
+-- @param player
+-- @param character
+-- @param palette
+function setGoSelectCharacter(player, character, palette)
+    selectChar(player, character, palette)
+end
+
+-- call the game loadstart function to load ?? in the go engine
+function callGoLoadStart()
+    return loadStart()
+end
+
+-- call the game ??? function to ??? in the go engine
+function callGoGame()
+    return game()
+end
+
+-- set the game allow BGM value to allow BGM in the go engine
+function setGoAllowBGM(allowBGM)
+    return setAllowBGM(allowBGM)
+end
+
+-- set the game allow debug keys value to allow debugkeys in the go engine
+function setGoAllowDebugKeys(allowDebugKeys)
+    return setAllowDebugKeys(allowDebugKeys)
+end
+
+
+
+
+
+
+

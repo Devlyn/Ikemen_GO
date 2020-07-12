@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"runtime"
 	"strconv"
@@ -127,6 +128,18 @@ Debug Options:
 	}
 	// Initialize GLFW library
 	chk(glfw.Init())
+	abs, err := filepath.Abs("./external/controllerdb/gamecontrollerdb.txt")
+	if err != nil {
+		panic(err)
+	}
+
+	file, err := ioutil.ReadFile(abs)
+	if err != nil {
+		panic(err)
+	}
+
+	glfw.UpdateGamepadMappings(string(file))
+
 	defer glfw.Terminate()
 
 	// Create log file to print errors to
