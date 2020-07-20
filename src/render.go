@@ -3,7 +3,7 @@ package main
 import (
 	"unsafe"
 
-	"github.com/go-gl/gl/v3.3-compatibility/gl"
+	"github.com/go-gl/gl/v2.1/gl"
 )
 
 var notiling = [4]int32{0, 0, 0, 0}

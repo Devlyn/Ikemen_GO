@@ -12,7 +12,7 @@ import (
 	"runtime"
 	"unsafe"
 
-	"github.com/go-gl/gl/v3.3-compatibility/gl"
+	"github.com/go-gl/gl/v2.1/gl"
 )
 
 type TransType int32
@@ -563,22 +563,22 @@ func (s *Sprite) SetPxl(px []byte) {
 		return
 	}
 	sys.mainThreadTask <- func() {
-		gl.Enable(gl.TEXTURE_2D)
 		s.Tex = newTexture()
+		gl.Enable(gl.TEXTURE_2D)
 		gl.BindTexture(gl.TEXTURE_2D, uint32(*s.Tex))
+		gl.PixelStorei(gl.UNPACK_ROW_LENGTH, 0)
+		gl.PixelStorei(gl.UNPACK_SKIP_PIXELS, 0)
+		gl.PixelStorei(gl.UNPACK_SKIP_ROWS, 0)
 		gl.PixelStorei(gl.UNPACK_ALIGNMENT, 1)
-		//gl.PixelStorei(gl.UNPACK_ROW_LENGTH, 0)
-		//gl.PixelStorei(gl.UNPACK_SKIP_PIXELS, 0)
-		//gl.PixelStorei(gl.UNPACK_SKIP_ROWS, 0)
 		p := unsafe.Pointer(nil)
 		if len(px) > 0 {
 			p = unsafe.Pointer(&px[0])
 		}
+		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, int32(s.Size[0]), int32(s.Size[1]), 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, p)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP)
-		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP)
-		gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, int32(s.Size[0]), int32(s.Size[1]), 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, p)
+		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+		gl.TexParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
 		gl.Disable(gl.TEXTURE_2D)
 	}
 }

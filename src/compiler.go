@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
-	"regexp"
 )
 
 const kuuhaktokigou = " !=<>()|&+-*/%,[]^:;{}#\"\t\r\n"
@@ -6780,6 +6780,7 @@ func (c *Compiler) loadFile(is IniSection, sc *StateControllerBase,
 	})
 	return *ret, err
 }
+
 // TODO: Remove boilderplate from the Map's Compiler.
 func (c *Compiler) mapSetSub(is IniSection, sc *StateControllerBase) error {
 	err := c.stateSec(is, func() error {

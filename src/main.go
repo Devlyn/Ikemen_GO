@@ -3,17 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/sqweek/dialog"
+	lua "github.com/yuin/gopher-lua"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
-
-	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/sqweek/dialog"
-	lua "github.com/yuin/gopher-lua"
 )
 
 const (
@@ -68,6 +66,11 @@ func closeLog(f *os.File) {
 	//fmt.Println("Closing log")
 	chk(f.Close())
 }
+
+//func main() {
+//	loadSff("data/DSP/system.sff", false)
+//}
+
 func main() {
 	os.Mkdir(ConfigDirName, os.ModeSticky|0755)
 	os.Mkdir(ReplayDirPath, os.ModeSticky|0755)
@@ -128,17 +131,6 @@ Debug Options:
 	}
 	// Initialize GLFW library
 	chk(glfw.Init())
-	abs, err := filepath.Abs("./external/controllerdb/gamecontrollerdb.txt")
-	if err != nil {
-		panic(err)
-	}
-
-	file, err := ioutil.ReadFile(abs)
-	if err != nil {
-		panic(err)
-	}
-
-	glfw.UpdateGamepadMappings(string(file))
 
 	defer glfw.Terminate()
 
@@ -170,7 +162,7 @@ Debug Options:
 		"data/guardbreak.zss",
 		"data/score.zss",
 		"data/tag.zss"
-    ],
+  ],
 	"ControllerStickSensitivity": 0.4,
 	"Credits": 10,
 	"DebugFont": "font/f-4x6.def",
@@ -241,7 +233,7 @@ Debug Options:
 	"VolumeBgm": 80,
 	"VolumeMaster": 80,
 	"VolumeSfx": 80,
-	"VRetrace": 1, 
+	"VRetrace": 1,
 	"WindowIcon": "external/icons/IkemenCylia.png",
 	"WindowTitle": "Ikemen GO",
 	"XinputTriggerSensitivity": 0,
