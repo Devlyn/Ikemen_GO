@@ -5,8 +5,7 @@ require('external.script.objects.config')
 require('external.script.objects.stats')
 
 main = {}
-
-callGoRefresh()
+main.flags = getCommandLineFlags()
 math.randomseed(os.time())
 
 local json = getJSONparser()
@@ -17,13 +16,17 @@ local config = getConfig()
 --Data loading from stats.json
 local stats = getStats()
 
+if config.SafeLoading then
+	setGCPercent(-1)
+end
+
 --;===========================================================
 --; COMMON FUNCTIONS
 --;===========================================================
 
 --add default commands
 main.t_commands = {
-	['$U'] = 0, ['$D'] = 0, ['$B'] = 0, ['$F'] = 0, ['a'] = 0, ['b'] = 0, ['c'] = 0, ['x'] = 0, ['y'] = 0, ['z'] = 0, ['s'] = 0, ['d'] = 0, ['w'] = 0, ['/s'] = 0, ['/d'] = 0, ['/w'] = 0
+	['$U'] = 0, ['$D'] = 0, ['$B'] = 0, ['$F'] = 0, ['a'] = 0, ['b'] = 0, ['c'] = 0, ['x'] = 0, ['y'] = 0, ['z'] = 0, ['s'] = 0, ['d'] = 0, ['w'] = 0, ['m'] = 0, ['/s'] = 0, ['/d'] = 0, ['/w'] = 0
 }
 
 function main.f_commandNew()

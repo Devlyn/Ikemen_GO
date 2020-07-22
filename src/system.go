@@ -10,6 +10,7 @@ import (
 	"math"
 	"os"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -33,10 +34,12 @@ const (
 
 // System vars are accessed globally through the program
 var sys = System{
-	randseed:  int32(time.Now().UnixNano()),
-	scrrect:   [...]int32{0, 0, 320, 240},
-	gameWidth: 320, gameHeight: 240,
-	widthScale: 1, heightScale: 1,
+	randseed:           int32(time.Now().UnixNano()),
+	scrrect:            [...]int32{0, 0, 320, 240},
+	gameWidth:          320,
+	gameHeight:         240,
+	widthScale:         1,
+	heightScale:        1,
 	brightness:         256,
 	roundTime:          -1,
 	lifeMul:            1,
@@ -49,13 +52,14 @@ var sys = System{
 	allPalFX:           *newPalFX(),
 	bgPalFX:            *newPalFX(),
 	sel:                *newSelect(),
-	keySatate:          make(map[glfw.Key]bool),
+	keyState:           make(map[glfw.Key]bool),
 	match:              1,
 	listenPort:         "7500",
 	loader:             *newLoader(),
 	numSimul:           [...]int32{2, 2}, numTurns: [...]int32{2, 2},
 	ignoreMostErrors:      true,
 	superpmap:             *newPalFX(),
+	stageList:             make(map[int32]*Stage),
 	wincnt:                wincntMap(make(map[string][]int32)),
 	wincntFileName:        "save/autolevel.save",
 	powerShare:            [...]bool{true, true},
@@ -71,22 +75,13 @@ var sys = System{
 	keyString:             "",
 	comboExtraFrameWindow: 1,
 	zoomDelay:             false,
-	//FLAC_FrameWait:       -1,
-	// Localcoord sceenpack
-	luaSpriteScale:        1,
-	luaSmallPortraitScale: 1,
-	luaBigPortraitScale:   1,
-	luaSpriteOffsetX:      0,
-	lifebarScale:          1,
-	lifebarOffsetX:        0,
-	lifebarPortraitScale:  1,
-	//Shader vars
-	multisampleAntialiasing: false,
-	postProcessingShader:    0,
-	allowbgm:                true,
-	borderless:              false,
-	vRetrace:                1,
-	screenshotFolder:        "",
+	//FLAC_FrameWait:          -1,
+	luaSpriteScale:       1,
+	luaPortraitScale:     1,
+	lifebarScale:         1,
+	lifebarPortraitScale: 1,
+	vRetrace:             1,
+	consoleType:          1,
 }
 
 type TeamMode int32
@@ -115,173 +110,178 @@ type System struct {
 	turnsRecoveryBonus      float32
 	lifebarFontScale        float32
 	debugFont               *Fnt
-	debugScript             string
-	debugDraw               bool
-	debugRef                [2]int
-	mixer                   Mixer
-	bgm                     Bgm
-	audioContext            *openal.Context
-	nullSndBuf              [audioOutLen * 2]int16
-	sounds                  Sounds
-	allPalFX, bgPalFX       PalFX
-	lifebar                 Lifebar
-	sel                     Select
-	keySatate               map[glfw.Key]bool
-	netInput                *NetInput
-	fileInput               *FileInput
-	aiInput                 [MaxSimul*2 + MaxAttachedChar]AiInput
-	keyConfig               []KeyConfig
-	joystickConfig          []KeyConfig
-	com                     [MaxSimul*2 + MaxAttachedChar]float32
-	autolevel               bool
-	home                    int
-	gameTime                int32
-	match                   int32
-	inputRemap              [MaxSimul*2 + MaxAttachedChar]int
-	listenPort              string
-	round                   int32
-	intro                   int32
-	time                    int32
-	winTeam                 int
-	winType                 [2]WinType
-	matchWins, wins         [2]int32
-	roundsExisted           [2]int32
-	draws                   int32
-	loader                  Loader
-	chars                   [MaxSimul*2 + MaxAttachedChar][]*Char
-	charList                CharList
-	cgi                     [MaxSimul*2 + MaxAttachedChar]CharGlobalInfo
-	tmode                   [2]TeamMode
-	numSimul, numTurns      [2]int32
-	esc                     bool
-	loadMutex               sync.Mutex
-	ignoreMostErrors        bool
-	stringPool              [MaxSimul*2 + MaxAttachedChar]StringPool
-	bcStack, bcVarStack     BytecodeStack
-	bcVar                   []BytecodeValue
-	workingChar             *Char
-	workingState            *StateBytecode
-	specialFlag             GlobalSpecialFlag
-	afterImageMax           int32
-	comboExtraFrameWindow   int32
-	envShake                EnvShake
-	pause                   int32
-	pausetime               int32
-	pausebg                 bool
-	pauseendcmdbuftime      int32
-	pauseplayer             int
-	super                   int32
-	supertime               int32
-	superpausebg            bool
-	superendcmdbuftime      int32
-	superplayer             int
-	superdarken             bool
-	superanim               *Animation
-	superpmap               PalFX
-	superpos                [2]float32
-	superfacing             float32
-	superp2defmul           float32
-	envcol                  [3]int32
-	envcol_time             int32
-	envcol_under            bool
-	clipboardText           [MaxSimul*2 + MaxAttachedChar][]string
-	stage                   *Stage
-	helperMax               int32
-	nextCharId              int32
-	wincnt                  wincntMap
-	wincntFileName          string
-	powerShare              [2]bool
-	tickCount               int
-	oldTickCount            int
-	tickCountF              float32
-	lastTick                float32
-	nextAddTime             float32
-	oldNextAddTime          float32
-	screenleft              float32
-	screenright             float32
-	xmin, xmax              float32
-	winskipped              bool
-	paused, step            bool
-	roundResetFlg           bool
-	reloadFlg               bool
-	reloadCharSlot          [MaxSimul*2 + MaxAttachedChar]bool
-	shortcutScripts         map[ShortcutKey]*ShortcutScript
-	turbo                   float32
-	commandLine             chan string
-	drawScale               float32
-	zoomlag                 float32
-	zoomScale               float32
-	zoomPosXLag             float32
-	zoomPosYLag             float32
-	enableZoomstate         bool
-	zoomPos                 [2]float32
-	debugWC                 *Char
-	cam                     Camera
-	finish                  FinishType
-	waitdown                int32
-	shuttertime             int32
-	projs                   [MaxSimul*2 + MaxAttachedChar][]Projectile
-	explods                 [MaxSimul*2 + MaxAttachedChar][]Explod
-	explDrawlist            [MaxSimul*2 + MaxAttachedChar][]int
-	topexplDrawlist         [MaxSimul*2 + MaxAttachedChar][]int
-	changeStateNest         int32
-	sprites                 DrawList
-	topSprites              DrawList
-	shadows                 ShadowList
-	drawc1                  ClsnRect
-	drawc2                  ClsnRect
-	drawc2sp                ClsnRect
-	drawc2mtk               ClsnRect
-	drawwh                  ClsnRect
-	autoguard               [MaxSimul*2 + MaxAttachedChar]bool
-	accel                   float32
-	clsnSpr                 Sprite
-	clsnDraw                bool
-	musicDraw               bool
-	statusDraw              bool
-	mainThreadTask          chan func()
-	explodMax               int
-	workpal                 []uint32
-	playerProjectileMax     int
-	errLog                  *log.Logger
-	audioClose              chan bool
-	nomusic                 bool
-	workBe                  []BytecodeExp
-	lifeAdjustment          bool
-	simulLoseKO             bool
-	tagLoseKO               bool
-	fullscreen              bool
-	allowDebugKeys          bool
-	commonAir               string
-	commonCmd               string
-	keyInput                glfw.Key
-	keyString               string
-	timerCount              []int32
-	cmdFlags                map[string]string
-	masterVolume            int
-	wavVolume               int
-	bgmVolume               int
-	audioDucking            bool
-	windowTitle             string
-	screenshotFolder        string
-	zoomDelay               bool
+	//debugScript             string
+	debugDraw             bool
+	debugRef              [2]int
+	mixer                 Mixer
+	bgm                   Bgm
+	audioContext          *openal.Context
+	nullSndBuf            [audioOutLen * 2]int16
+	sounds                Sounds
+	allPalFX, bgPalFX     PalFX
+	lifebar               Lifebar
+	sel                   Select
+	keyState              map[glfw.Key]bool
+	netInput              *NetInput
+	fileInput             *FileInput
+	aiInput               [MaxSimul*2 + MaxAttachedChar]AiInput
+	keyConfig             []KeyConfig
+	joystickConfig        []KeyConfig
+	com                   [MaxSimul*2 + MaxAttachedChar]float32
+	autolevel             bool
+	home                  int
+	gameTime              int32
+	match                 int32
+	inputRemap            [MaxSimul*2 + MaxAttachedChar]int
+	listenPort            string
+	round                 int32
+	intro                 int32
+	time                  int32
+	winTeam               int
+	winType               [2]WinType
+	matchWins, wins       [2]int32
+	roundsExisted         [2]int32
+	draws                 int32
+	loader                Loader
+	chars                 [MaxSimul*2 + MaxAttachedChar][]*Char
+	charList              CharList
+	cgi                   [MaxSimul*2 + MaxAttachedChar]CharGlobalInfo
+	tmode                 [2]TeamMode
+	numSimul, numTurns    [2]int32
+	esc                   bool
+	loadMutex             sync.Mutex
+	ignoreMostErrors      bool
+	stringPool            [MaxSimul*2 + MaxAttachedChar]StringPool
+	bcStack, bcVarStack   BytecodeStack
+	bcVar                 []BytecodeValue
+	workingChar           *Char
+	workingState          *StateBytecode
+	specialFlag           GlobalSpecialFlag
+	afterImageMax         int32
+	comboExtraFrameWindow int32
+	envShake              EnvShake
+	pause                 int32
+	pausetime             int32
+	pausebg               bool
+	pauseendcmdbuftime    int32
+	pauseplayer           int
+	super                 int32
+	supertime             int32
+	superpausebg          bool
+	superendcmdbuftime    int32
+	superplayer           int
+	superdarken           bool
+	superanim             *Animation
+	superpmap             PalFX
+	superpos              [2]float32
+	superfacing           float32
+	superp2defmul         float32
+	envcol                [3]int32
+	envcol_time           int32
+	envcol_under          bool
+	//clipboardText           [MaxSimul*2 + MaxAttachedChar][]string
+	stage               *Stage
+	stageList           map[int32]*Stage
+	stageLoop           bool
+	stageLoopNo         int
+	helperMax           int32
+	nextCharId          int32
+	wincnt              wincntMap
+	wincntFileName      string
+	powerShare          [2]bool
+	tickCount           int
+	oldTickCount        int
+	tickCountF          float32
+	lastTick            float32
+	nextAddTime         float32
+	oldNextAddTime      float32
+	screenleft          float32
+	screenright         float32
+	xmin, xmax          float32
+	winskipped          bool
+	paused, step        bool
+	roundResetFlg       bool
+	reloadFlg           bool
+	reloadCharSlot      [MaxSimul*2 + MaxAttachedChar]bool
+	shortcutScripts     map[ShortcutKey]*ShortcutScript
+	turbo               float32
+	commandLine         chan string
+	drawScale           float32
+	zoomlag             float32
+	zoomScale           float32
+	zoomPosXLag         float32
+	zoomPosYLag         float32
+	enableZoomstate     bool
+	zoomPos             [2]float32
+	debugWC             *Char
+	cam                 Camera
+	finish              FinishType
+	waitdown            int32
+	slowtime            int32
+	shuttertime         int32
+	fadeintime          int32
+	fadeouttime         int32
+	projs               [MaxSimul*2 + MaxAttachedChar][]Projectile
+	explods             [MaxSimul*2 + MaxAttachedChar][]Explod
+	explDrawlist        [MaxSimul*2 + MaxAttachedChar][]int
+	topexplDrawlist     [MaxSimul*2 + MaxAttachedChar][]int
+	changeStateNest     int32
+	sprites             DrawList
+	topSprites          DrawList
+	shadows             ShadowList
+	drawc1              ClsnRect
+	drawc2              ClsnRect
+	drawc2sp            ClsnRect
+	drawc2mtk           ClsnRect
+	drawwh              ClsnRect
+	autoguard           [MaxSimul*2 + MaxAttachedChar]bool
+	accel               float32
+	clsnSpr             Sprite
+	clsnDraw            bool
+	musicDraw           bool
+	statusDraw          bool
+	mainThreadTask      chan func()
+	explodMax           int
+	workpal             []uint32
+	playerProjectileMax int
+	errLog              *log.Logger
+	audioClose          chan bool
+	nomusic             bool
+	workBe              []BytecodeExp
+	lifeAdjustment      bool
+	loseSimul           bool
+	loseTag             bool
+	fullscreen          bool
+	allowDebugKeys      bool
+	commonAir           string
+	commonCmd           string
+	keyInput            glfw.Key
+	keyString           string
+	timerCount          []int32
+	cmdFlags            map[string]string
+	masterVolume        int
+	wavVolume           int
+	bgmVolume           int
+	audioDucking        bool
+	windowTitle         string
+	screenshotFolder    string
+	//zoomDelay               bool
 	//FLAC_FrameWait          int
 
 	controllerStickSensitivity float32
 	xinputTriggerSensitivity   float32
 
 	// Localcoord sceenpack
-	luaLocalcoord         [2]int32
-	luaSpriteScale        float64
-	luaSmallPortraitScale float32
-	luaBigPortraitScale   float32
-	luaSpriteOffsetX      float64
+	luaLocalcoord    [2]int32
+	luaSpriteScale   float64
+	luaPortraitScale float32
+	luaSpriteOffsetX float64
 
-	lifebarScale          float32
-	lifebarOffsetX        float32
-	lifebarPortraitScale  float32
-	lifebarLocalcoord     [2]int32
-	localcoordScalingType int32
+	// Localcoord lifebar
+	lifebarScale         float32
+	lifebarOffsetX       float32
+	lifebarPortraitScale float32
+	lifebarLocalcoord    [2]int32
 
 	// Shader Vars
 	postProcessingShader    int32
@@ -300,32 +300,40 @@ type System struct {
 	borderless bool
 	vRetrace   int
 
-	gameMode        string
-	demoTime        int32
-	frameCounter    int32
-	motifDir        string
-	captureNum      int
-	challenger      int
-	roundType       [2]RoundType
-	ocd             [MaxSimul*2 + MaxAttachedChar]OverrideCharData
-	allowbgm        bool
-	ratioLevel      [MaxSimul*2 + MaxAttachedChar]int32
-	timerStart      int32
-	timerRounds     []int32
-	scoreStart      [2]float32
-	scoreRounds     [][2]float32
-	matchData       *lua.LTable
-	matchPos        [8]float32
-	matchClearance  [2]MatchClearance
+	gameMode     string
+	demoTime     int32
+	frameCounter int32
+	motifDir     string
+	captureNum   int
+	challenger   int
+	roundType    [2]RoundType
+	ocd          [MaxSimul*2 + MaxAttachedChar]OverrideCharData
+	//allowbgm        bool
+	ratioLevel  [MaxSimul*2 + MaxAttachedChar]int32
+	timerStart  int32
+	timerRounds []int32
+	scoreStart  [2]float32
+	scoreRounds [][2]float32
+	matchData   *lua.LTable
+	//matchPos        [8]float32
+	//matchClearance  [2]MatchClearance
 	consecutiveWins [2]int32
 	commonConst     string
+	commonLua       []string
 	commonStates    []string
 	gameSpeed       float32
 	maxPowerMode    bool
-	postMatch       bool
-	preloading      Preloading
-	clsnText        []ClsnText
-	consoleText     []string
+	//postMatch       bool
+	//preloading      Preloading
+	clsnText     []ClsnText
+	consoleText  []string
+	consoleType  int
+	luaLState    *lua.LState
+	statusLFunc  *lua.LFunction
+	listLFunc    []*lua.LFunction
+	endMatch     bool
+	postMatchFlg bool
+	legacyMode   bool
 }
 
 type Window struct {
@@ -371,6 +379,7 @@ func (s *System) newWindow(title string, fullscreen bool, w, h int, oldWindow *W
 	ret := &Window{window, title, fullscreen, x, y, w, h}
 	return ret, err
 }
+
 func (s *System) fullscreenWindow(w, h int, title string, monitor *glfw.Monitor,
 	mode *glfw.VidMode, oldWindow *glfw.Window) (*glfw.Window, error) {
 	var err error
@@ -400,9 +409,11 @@ func (s *System) fullscreenWindow(w, h int, title string, monitor *glfw.Monitor,
 	}
 	return window, nil
 }
+
 func (w *Window) destroy() {
 	w.Window.Destroy()
 }
+
 func (w *Window) toggleFullscreen() {
 	if w.fullscreen {
 		w.SetMonitor(nil, w.x, w.y, w.w, w.h, 60)
@@ -518,6 +529,7 @@ func (s *System) init(w, h int32) *lua.LState {
 	s.clsnSpr.SetPxl([]byte{0})
 	s.resetOverrideCharData()
 	systemScriptInit(l)
+	s.shortcutScripts = make(map[ShortcutKey]*ShortcutScript)
 	// So now that we have a window we add a icon.
 	if len(s.windowMainIconLocation) > 0 {
 		// First we initialize arrays.
@@ -546,6 +558,7 @@ func (s *System) init(w, h int32) *lua.LState {
 	}()
 	return l
 }
+
 func (s *System) setWindowSize(w, h int32) {
 	s.scrrect[2], s.scrrect[3] = w, h
 	if s.scrrect[2]*3 > s.scrrect[3]*4 {
@@ -556,6 +569,7 @@ func (s *System) setWindowSize(w, h int32) {
 	s.widthScale = float32(s.scrrect[2]) / float32(s.gameWidth)
 	s.heightScale = float32(s.scrrect[3]) / float32(s.gameHeight)
 }
+
 func (s *System) eventUpdate() bool {
 	s.esc = false
 	for _, v := range s.shortcutScripts {
@@ -565,6 +579,7 @@ func (s *System) eventUpdate() bool {
 	s.gameEnd = s.window.Window.ShouldClose()
 	return !s.gameEnd
 }
+
 func (s *System) runMainThreadTask() {
 	for {
 		select {
@@ -575,6 +590,7 @@ func (s *System) runMainThreadTask() {
 		}
 	}
 }
+
 func (s *System) await(fps int) bool {
 	if !s.frameSkip {
 		// Render the finished frame
@@ -605,13 +621,14 @@ func (s *System) await(fps int) bool {
 	}
 	s.eventUpdate()
 	if !s.frameSkip {
-		gl.Viewport(0, 0, int32(s.scrrect[2]), int32(s.scrrect[3]))
+		gl.Viewport(0, 0, s.scrrect[2], s.scrrect[3])
 		if s.netInput == nil {
 			gl.Clear(gl.COLOR_BUFFER_BIT)
 		}
 	}
 	return !s.gameEnd
 }
+
 func (s *System) update() bool {
 	s.frameCounter = s.frameCounter + 1
 	if s.fileInput != nil {
@@ -628,6 +645,7 @@ func (s *System) update() bool {
 	}
 	return s.await(FPS)
 }
+
 func (s *System) audioOpen() {
 	if s.audioContext == nil {
 		device := openal.OpenDevice("")
@@ -642,6 +660,7 @@ func (s *System) audioOpen() {
 		go s.soundWrite()
 	}
 }
+
 func (s *System) soundWrite() {
 	defer func() { s.audioClose <- true }()
 	src := NewAudioSource()
@@ -698,6 +717,7 @@ func (s *System) soundWrite() {
 	s.audioContext = nil
 	device.CloseDevice()
 }
+
 func (s *System) playSound() {
 	if s.mixer.write() {
 		s.sounds.mixSounds()
@@ -708,19 +728,23 @@ func (s *System) playSound() {
 		}
 	}
 }
+
 func (s *System) resetRemapInput() {
 	for i := range s.inputRemap {
 		s.inputRemap[i] = i
 	}
 }
+
 func (s *System) loaderReset() {
 	s.round, s.wins, s.roundsExisted, s.roundType, s.challenger = 1, [2]int32{}, [2]int32{}, [2]RoundType{}, 0
 	s.loader.reset()
 }
+
 func (s *System) loadStart() {
 	s.loaderReset()
 	s.loader.runTread()
 }
+
 func (s *System) synchronize() error {
 	if s.fileInput != nil {
 		s.fileInput.Synchronize()
@@ -729,6 +753,7 @@ func (s *System) synchronize() error {
 	}
 	return nil
 }
+
 func (s *System) anyHardButton() bool {
 	for _, kc := range s.keyConfig {
 		if kc.A() || kc.B() || kc.C() || kc.X() || kc.Y() || kc.Z() {
@@ -742,6 +767,7 @@ func (s *System) anyHardButton() bool {
 	}
 	return false
 }
+
 func (s *System) anyButton() bool {
 	if s.fileInput != nil {
 		return s.fileInput.AnyButton()
@@ -751,6 +777,7 @@ func (s *System) anyButton() bool {
 	}
 	return s.anyHardButton()
 }
+
 func (s *System) playerID(id int32) *Char {
 	return s.charList.get(id)
 }

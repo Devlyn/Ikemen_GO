@@ -330,6 +330,11 @@ function setGoAllowDebugKeys(allowDebugKeys)
     return setAllowDebugKeys(allowDebugKeys)
 end
 
+-- set the game ???
+function setGoGCPercent(value)
+    return setGCPercent(value)
+end
+
 
 
 

@@ -22,7 +22,7 @@ func ReadAnimFrame(line string) *AnimFrame {
 	if len(line) == 0 || (line[0] < '0' || '9' < line[0]) && line[0] != '-' {
 		return nil
 	}
-	ary := strings.SplitN(line, ",", 7)
+	ary := strings.SplitN(line, ",", 10)
 	if len(ary) < 5 {
 		return nil
 	}

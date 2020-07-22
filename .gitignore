@@ -33,6 +33,7 @@ work/*
 data/big
 data/kfm
 data/mugen1
+data/work
 data/common.snd
 data/common1.cns
 data/continue.sff
@@ -47,10 +48,12 @@ data/fightfx.air
 data/fightfx.sff
 data/gameover.def
 data/gameover.sff
+data/glyphs.sff
 data/intro.def
 data/intro.sff
 data/logo.def
 data/logo.sff
+data/select.def
 data/system.def
 data/system.sff
 data/system.snd
