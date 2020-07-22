@@ -185,7 +185,7 @@ function loop()
         end
     end
     --match end
-    if roundover() and matchover() then
+    if matchover() and roundover() then
         if not endFlag then
             resetMatchData()
             endFlag = true
@@ -209,7 +209,7 @@ function loop()
     else
         main.f_cmdInput()
         if esc() or main.f_input(main.t_players, {'m'}) then
-            if gameMode() == "" then --match started via command line
+            if gamemode('') or gamemode('demo') or gamemode('randomtest') then
                 endMatch()
             else
                 menu.init()

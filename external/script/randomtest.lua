@@ -1,7 +1,6 @@
--- Used for demo mode and generates AI rank data
--- Demo mode uses AutoLevel a GO function that ranks characters based on his number of loses vs wins
+-- Used to generate AI rank data
+-- AutoLevel is a GO function that ranks characters based on his number of loses vs wins
 -- AutoLevel is palette dependent so if a char has a 12th palette OP mode that mode can have more rank than his normal one
-
 local randomtest = {}
 
 function randomtest.strtrim(s)
@@ -29,14 +28,11 @@ local nextChar = 1
 
 function randomtest.addMoudeta(rank)
   moudeta[#moudeta + 1] = rank
-  local max =
-    math.floor(
-      numChars / (math.min(numChars / (juuni*10) + 3, juuni)*juuni))
+  local max = math.floor(numChars / (math.min(numChars / (juuni * 10) + 3, juuni) * juuni))
   while #moudeta > max do
     table.remove(moudeta, 1)
   end
 end
-
 
 function randomtest.randRank()
   local r = 0
@@ -44,7 +40,7 @@ function randomtest.randRank()
     r = math.random(1, tuyoiBorder + juuni - 2);
     local notbroken = true
     for i = 1, #moudeta do
-      if math.abs(moudeta[i] - r) <= math.floor(juuni/3) then
+      if math.abs(moudeta[i] - r) <= math.floor(juuni / 3) then
         notbroken = false
         break
       end
@@ -88,15 +84,15 @@ function randomtest.rakuBenry()
   randomtest.eachAllChars(function(cel)
     numChars = numChars + 1
   end)
-  local tuyoninzu = math.floor(numChars / (juuni*10))
+  local tuyoninzu = math.floor(numChars / (juuni * 10))
   if tuyoninzu < juuni - 1 then
-    tuyoiBorder =  math.floor(numChars / (tuyoninzu + 1))
+    tuyoiBorder = math.floor(numChars / (tuyoninzu + 1))
     tuyoninzu = juuni - 1
   else
     tuyoiBorder = math.floor(numChars / juuni)
   end
   local total = 0
-  local zero ={}
+  local zero = {}
   local tsuyoshi = {}
   local rand = {}
   local kai = {}
@@ -104,8 +100,8 @@ function randomtest.rakuBenry()
   local tuyocnt = 0
   local ran = randomtest.randRank()
   randomtest.eachAllChars(function(cel)
-    if #veljnz < cel*12 then
-      for i = #veljnz + 1, cel*12 do
+    if #veljnz < cel * 12 then
+      for i = #veljnz + 1, cel * 12 do
         veljnz[i] = 0
       end
     end
@@ -114,16 +110,16 @@ function randomtest.rakuBenry()
     for j = 1, 12 do
       if wins and j <= #wins then
         total = total + wins[j]
-        veljnz[cel*12 + j] = wins[j]
+        veljnz[cel * 12 + j] = wins[j]
         tmp = tmp + wins[j]
       else
-        veljnz[cel*12 + j] = 0
+        veljnz[cel * 12 + j] = 0
       end
     end
     if tmp >= tuyoiBorder then tuyocnt = tuyocnt + 1 end
     if tmp >= tuyoiBorder - juuni then table.insert(tsuyoshi, cel) end
     if tmp >= 1 and tmp <= juuni then table.insert(bimyou, cel) end
-    if tmp > ran-juuni and tmp <= ran then table.insert(rand, cel) end
+    if tmp > ran - juuni and tmp <= ran then table.insert(rand, cel) end
     if tmp == 0 then table.insert(zero, cel) end
     if tmp < 0 then table.insert(kai, cel) end
   end)
@@ -144,7 +140,7 @@ function randomtest.rakuBenry()
     charAdd(zero, numZero)
     charAdd(kai, tuyoninzu - numZero)
     rank = 0
-  elseif #bimyou >= math.max(tuyoninzu*20, math.floor((numChars*3)/20)) then
+  elseif #bimyou >= math.max(tuyoninzu * 20, math.floor((numChars * 3) / 20)) then
     charAdd(bimyou, #bimyou)
     rank = juuni
   else
@@ -155,7 +151,7 @@ function randomtest.rakuBenry()
       randomtest.eachAllChars(function(cel)
         local tmp = 0
         for j = 1, 12 do
-          tmp = tmp + veljnz[cel*12 + j]
+          tmp = tmp + veljnz[cel * 12 + j]
         end
         if tmp > ran-juuni and tmp <= ran then table.insert(rand, cel) end
       end)
@@ -167,9 +163,9 @@ function randomtest.rakuBenry()
       randomtest.addMoudeta(rank)
     elseif tuyocnt >= tuyoninzu then
       charAdd(tsuyoshi, #tsuyoshi)
-      rank = tuyoiBorder+juuni-1
+      rank = tuyoiBorder + juuni - 1
     else
-      randomtest.addMoudeta(tuyoiBorder + (juuni-2) - math.floor(juuni/3))
+      randomtest.addMoudeta(tuyoiBorder + (juuni - 2) - math.floor(juuni / 3))
       charAdd(kai, #kai)
       rank = -1
     end
@@ -189,7 +185,7 @@ function randomtest.rakuBenry()
   randomtest.eachAllChars(function(cel)
     buf = buf .. getCharFileName(cel) .. ','
     for j = 1, 12 do
-      buf = buf .. ' ' .. veljnz[cel*12 + j]
+      buf = buf .. ' ' .. veljnz[cel * 12 + j]
     end
     buf = buf .. '\r\n'
   end)
@@ -206,9 +202,10 @@ function randomtest.randSel(pno, winner)
   elseif rank < 0 then
     team = math.random(0, 2)
   else
-    team = math.random(0, 1)*2
+    team = math.random(0, 1) * 2
   end
   setTeamMode(pno, team, math.random(1, 4))
+  start['p' .. pno .. 'TeamMode'] = team
   local tmp = 0
   while tmp < 2 do
     tmp = selectChar(pno, roster[nextChar], getCharRandomPalette(roster[nextChar]))
@@ -241,17 +238,18 @@ function randomtest.init()
   wins = 0
   randomtest.rosterTxt()
   nextChar = 1
-  saikyou = rank == tuyoiBorder+juuni-1
+  saikyou = rank == tuyoiBorder + juuni - 1
 end
 
 -- This is executed first
 function randomtest.run()
   randomtest.init()
-  callGoRefresh()
+  refresh()
   while not esc() do
     randomtest.randSel(1, winner)
     randomtest.randSel(2, winner)
-    start.f_setStage()
+    local stage = start.f_setStage()
+    start.f_setMusic(stage)
     loadStart()
     local oldwinner = winner
     winner = game()

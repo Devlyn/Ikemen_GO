@@ -51,9 +51,9 @@ const (
 	CK_x
 	CK_y
 	CK_z
+	CK_s
 	CK_d
 	CK_w
-	CK_s
 	CK_m
 	CK_na
 	CK_nb
@@ -61,9 +61,9 @@ const (
 	CK_nx
 	CK_ny
 	CK_nz
+	CK_ns
 	CK_nd
 	CK_nw
-	CK_ns
 	CK_nm
 	CK_Last = CK_nm
 )
@@ -604,7 +604,6 @@ func keyCallback(_ *glfw.Window, key glfw.Key, _ int,
 			}
 		}
 		for k, v := range sys.shortcutScripts {
-			v.Activate = v.Activate || k.Test(key, mk)
 			if sys.netInput == nil && (!sys.paused || sys.step || v.Pause) {
 				v.Activate = v.Activate || k.Test(key, mk)
 			}
@@ -2092,6 +2091,9 @@ func (cl *CommandList) Input(i int, facing int32, aiLevel float32) bool {
 					}
 					if w == false {
 						w = sys.joystickConfig[in].w()
+					}
+					if m == false {
+						m = sys.joystickConfig[in].m()
 					}
 				}
 			}

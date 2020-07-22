@@ -157,12 +157,16 @@ Debug Options:
 	"CommonAir": "data/common.air",
 	"CommonCmd": "data/common.cmd",
 	"CommonConst": "data/common.const",
+	"CommonLua": [
+		"loop()"
+    ],
 	"CommonStates": [
 		"data/dizzy.zss",
 		"data/guardbreak.zss",
 		"data/score.zss",
 		"data/tag.zss"
   ],
+	"ConsoleType": 1,
 	"ControllerStickSensitivity": 0.4,
 	"Credits": 10,
 	"DebugFont": "font/f-4x6.def",
@@ -171,15 +175,20 @@ Debug Options:
 	"DebugScript": "external/script/debug.lua",
 	"Difficulty": 8,
 	"ExternalShaders": [],
+	"ForceStageZoomin": 0,
+	"ForceStageZoomout": 0,
 	"Fullscreen": false,
 	"GameWidth": 1280,
 	"GameHeight": 720,
 	"GameSpeed": 100,
 	"IP": {},
+	"LegacyMode": false,
 	"LifebarFontScale": 1,
 	"LifeMul": 100,
 	"ListenPort": "7500",
 	"LocalcoordScalingType": 1,
+	"LoseSimul": true,
+	"LoseTag": false,
 	"MaxAfterImage": 128,
 	"MaxDrawGames": -2,
 	"MaxExplod": 512,
@@ -200,10 +209,10 @@ Debug Options:
 		4
 	],
 	"PostProcessingShader": 0,
-	"PreloadingSmall": true,
 	"PreloadingBig": true,
-	"PreloadingVersus": true,
+	"PreloadingSmall": true,	
 	"PreloadingStage": true,
+	"PreloadingVersus": true,
 	"QuickContinue": false,
 	"RatioAttack": [
 		0.82,
@@ -220,11 +229,10 @@ Debug Options:
 	"RoundsNumSingle": 2,
 	"RoundsNumTeam": 2,
 	"RoundTime": 99,
+	"SafeLoading": false,
 	"ScreenshotFolder": "",
-	"SimulLoseKO": true,
 	"SingleVsTeamLife": 100,
 	"System": "external/script/main.lua",
-	"TagLoseKO": false,
 	"TeamLifeAdjustment": false,
 	"TeamPowerShare": true,
 	"TrainingChar": "chars/training/training.def",
@@ -239,8 +247,6 @@ Debug Options:
 	"XinputTriggerSensitivity": 0,
 	"ZoomActive": true,
 	"ZoomDelay": false,
-	"ZoomMax": 1,
-	"ZoomMin": 1,
 	"ZoomSpeed": 1,
 	"KeyConfig": [
 		{
@@ -258,7 +264,8 @@ Debug Options:
 				"d",
 				"RETURN",
 				"MINUS",
-				"EQUALS"
+				"EQUALS",
+				"Not used"
 			]
 		},
 		{
@@ -276,7 +283,8 @@ Debug Options:
 				"l",
 				"KP_ENTER",
 				"LEFTBRACKET",
-				"RIGHTBRACKET"
+				"RIGHTBRACKET",
+				"Not used"
 			]
 		},
 		{
@@ -294,7 +302,8 @@ Debug Options:
 				"6",
 				"LCTRL",
 				"7",
-				"8"
+				"8",
+				"Not used"
 			]
 		},
 		{
@@ -312,7 +321,8 @@ Debug Options:
 				"m",
 				"RCTRL",
 				"COMMA",
-				"PERIOD"
+				"PERIOD",
+				"Not used"
 			]
 		}
 	],
@@ -332,7 +342,8 @@ Debug Options:
 				"4",
 				"9",
 				"7",
-				"6"
+				"6",
+				"Not used"
 			]
 		},
 		{
@@ -350,7 +361,8 @@ Debug Options:
 				"4",
 				"9",
 				"7",
-				"6"
+				"6",
+				"Not used"
 			]
 		},
 		{
@@ -368,7 +380,8 @@ Debug Options:
 				"4",
 				"9",
 				"7",
-				"6"
+				"6",
+				"Not used"
 			]
 		},
 		{
@@ -386,7 +399,8 @@ Debug Options:
 				"4",
 				"9",
 				"7",
-				"6"
+				"6",
+				"Not used"
 			]
 		}
 	]
@@ -405,7 +419,9 @@ Debug Options:
 		CommonAir                  string
 		CommonCmd                  string
 		CommonConst                string
+		CommonLua                  []string
 		CommonStates               []string
+		ConsoleType                int
 		ControllerStickSensitivity float32
 		Credits                    int
 		DebugFont                  string
@@ -414,15 +430,20 @@ Debug Options:
 		DebugScript                string
 		Difficulty                 int
 		ExternalShaders            []string
+		ForceStageZoomin           float32
+		ForceStageZoomout          float32
 		Fullscreen                 bool
 		GameWidth                  int32
 		GameHeight                 int32
 		GameSpeed                  float32
 		IP                         map[string]string
+		LegacyMode                 bool
 		LifebarFontScale           float32
 		LifeMul                    float32
 		ListenPort                 string
 		LocalcoordScalingType      int32
+		LoseSimul                  bool
+		LoseTag                    bool
 		MaxAfterImage              int32
 		MaxDrawGames               int32
 		MaxExplod                  int
@@ -434,21 +455,20 @@ Debug Options:
 		NumTag                     [2]int
 		NumTurns                   [2]int
 		PostProcessingShader       int32
-		PreloadingSmall            bool
 		PreloadingBig              bool
-		PreloadingVersus           bool
+		PreloadingSmall            bool
 		PreloadingStage            bool
+		PreloadingVersus           bool
 		QuickContinue              bool
 		RatioAttack                [4]float32
 		RatioLife                  [4]float32
 		RoundsNumSingle            int32
 		RoundsNumTeam              int32
 		RoundTime                  int32
+		SafeLoading                bool
 		ScreenshotFolder           string
-		SimulLoseKO                bool
 		SingleVsTeamLife           float32
 		System                     string
-		TagLoseKO                  bool
 		TeamLifeAdjustment         bool
 		TeamPowerShare             bool
 		TrainingChar               string
@@ -463,8 +483,6 @@ Debug Options:
 		XinputTriggerSensitivity   float32
 		ZoomActive                 bool
 		ZoomDelay                  bool
-		ZoomMax                    float32
-		ZoomMin                    float32
 		ZoomSpeed                  float32
 		KeyConfig                  []struct {
 			Joystick int
@@ -477,6 +495,10 @@ Debug Options:
 	}{}
 	// Read the config JSON file and unmarshal it to the tmp variable
 	chk(json.Unmarshal(defcfg, &tmp))
+	cfgPath := ConfigFilePath
+	if _, ok := sys.cmdFlags["-config"]; ok {
+		cfgPath = sys.cmdFlags["-config"]
+	}
 	if bytes, err := ioutil.ReadFile(ConfigFilePath); err == nil {
 		if len(bytes) >= 3 &&
 			bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf {
@@ -486,7 +508,7 @@ Debug Options:
 	}
 	cfg, _ := json.MarshalIndent(tmp, "", "	")
 	// Write to the config JSON file (and also set permissions to CHMOD 644
-	chk(ioutil.WriteFile(ConfigFilePath, cfg, 0644))
+	chk(ioutil.WriteFile(cfgPath, cfg, 0644))
 
 	// Bind the values from the config JSON to the system
 	sys.afterImageMax = tmp.MaxAfterImage
@@ -494,10 +516,10 @@ Debug Options:
 	sys.audioDucking = tmp.AudioDucking
 	sys.bgmVolume = tmp.VolumeBgm
 	sys.borderless = tmp.Borderless
-	sys.zoomDelay = tmp.ZoomDelay
+	sys.cam.ZoomDelayEnable = tmp.ZoomDelay
 	sys.cam.ZoomEnable = tmp.ZoomActive
-	sys.cam.ZoomMax = tmp.ZoomMax
-	sys.cam.ZoomMin = tmp.ZoomMin
+	sys.cam.ZoomMax = tmp.ForceStageZoomin
+	sys.cam.ZoomMin = tmp.ForceStageZoomout
 	sys.cam.ZoomSpeed = 12 - tmp.ZoomSpeed
 	sys.comboExtraFrameWindow = tmp.ComboExtraFrameWindow
 	if air, err := ioutil.ReadFile(tmp.CommonAir); err == nil {
@@ -507,26 +529,28 @@ Debug Options:
 		sys.commonCmd = "\n" + string(cmd)
 	}
 	sys.commonConst = tmp.CommonConst
+	sys.commonLua = tmp.CommonLua
 	sys.commonStates = tmp.CommonStates
+	sys.consoleType = tmp.ConsoleType
 	sys.controllerStickSensitivity = tmp.ControllerStickSensitivity
 	sys.debugDraw = tmp.DebugMode
-	sys.debugScript = tmp.DebugScript
 	sys.explodMax = tmp.MaxExplod
 	sys.externalShaderList = tmp.ExternalShaders
 	sys.fullscreen = tmp.Fullscreen
+	sys.gameSpeed = tmp.GameSpeed / 100
 	sys.helperMax = tmp.MaxHelper
+	sys.legacyMode = tmp.LegacyMode
 	sys.lifeAdjustment = tmp.TeamLifeAdjustment
 	sys.lifebarFontScale = tmp.LifebarFontScale
+	sys.lifeMul = tmp.LifeMul / 100
 	sys.listenPort = tmp.ListenPort
-	sys.localcoordScalingType = tmp.LocalcoordScalingType
+	sys.loseSimul = tmp.LoseSimul
+	sys.loseTag = tmp.LoseTag
 	sys.masterVolume = tmp.VolumeMaster
 	sys.multisampleAntialiasing = tmp.MSAA
 	sys.playerProjectileMax = tmp.MaxPlayerProjectile
 	sys.postProcessingShader = tmp.PostProcessingShader
-	sys.preloading.big = tmp.PreloadingBig
-	sys.preloading.small = tmp.PreloadingSmall
-	sys.preloading.stage = tmp.PreloadingStage
-	sys.preloading.versus = tmp.PreloadingVersus
+	sys.powerShare = [...]bool{tmp.TeamPowerShare, tmp.TeamPowerShare}
 	tmp.ScreenshotFolder = strings.TrimSpace(tmp.ScreenshotFolder)
 	if tmp.ScreenshotFolder != "" {
 		tmp.ScreenshotFolder = strings.Replace(tmp.ScreenshotFolder, "\\", "/", -1)
@@ -535,6 +559,9 @@ Debug Options:
 	} else {
 		sys.screenshotFolder = tmp.ScreenshotFolder
 	}
+	sys.singleVsTeamLife = tmp.SingleVsTeamLife / 100
+	sys.turnsRecoveryBase = tmp.TurnsRecoveryBase / 100
+	sys.turnsRecoveryBonus = tmp.TurnsRecoveryBonus / 100
 	sys.vRetrace = tmp.VRetrace
 	sys.wavVolume = tmp.VolumeSfx
 	sys.windowMainIconLocation = append(sys.windowMainIconLocation, tmp.WindowIcon)
@@ -544,20 +571,21 @@ Debug Options:
 		return int(StringToKey(key))
 	}
 	Atoi := func(key string) int {
-		var i int
-		i, _ = strconv.Atoi(key)
-		return i
+		if i, err := strconv.Atoi(key); err == nil {
+			return i
+		}
+		return 999
 	}
 	for i := 0; i < MaxSimul; i++ {
 		for _, kc := range tmp.KeyConfig {
 			b := kc.Buttons
 			if kc.Joystick < 0 {
 				sys.keyConfig = append(sys.keyConfig, KeyConfig{kc.Joystick,
-					stoki(b[0].(string)), stoki(b[1].(string)),
-					stoki(b[2].(string)), stoki(b[3].(string)),
-					stoki(b[4].(string)), stoki(b[5].(string)), stoki(b[6].(string)),
-					stoki(b[7].(string)), stoki(b[8].(string)), stoki(b[9].(string)),
-					stoki(b[10].(string)), stoki(b[11].(string)), stoki(b[12].(string))})
+					stoki(b[0].(string)), stoki(b[1].(string)), stoki(b[2].(string)),
+					stoki(b[3].(string)), stoki(b[4].(string)), stoki(b[5].(string)),
+					stoki(b[6].(string)), stoki(b[7].(string)), stoki(b[8].(string)),
+					stoki(b[9].(string)), stoki(b[10].(string)), stoki(b[11].(string)),
+					stoki(b[12].(string)), stoki(b[13].(string))})
 			}
 		}
 		if _, ok := sys.cmdFlags["-nojoy"]; !ok {
@@ -565,11 +593,11 @@ Debug Options:
 				b := jc.Buttons
 				if jc.Joystick >= 0 {
 					sys.joystickConfig = append(sys.joystickConfig, KeyConfig{jc.Joystick,
-						Atoi(b[0].(string)), Atoi(b[1].(string)),
-						Atoi(b[2].(string)), Atoi(b[3].(string)),
-						Atoi(b[4].(string)), Atoi(b[5].(string)), Atoi(b[6].(string)),
-						Atoi(b[7].(string)), Atoi(b[8].(string)), Atoi(b[9].(string)),
-						Atoi(b[10].(string)), Atoi(b[11].(string)), Atoi(b[12].(string))})
+						Atoi(b[0].(string)), Atoi(b[1].(string)), Atoi(b[2].(string)),
+						Atoi(b[3].(string)), Atoi(b[4].(string)), Atoi(b[5].(string)),
+						Atoi(b[6].(string)), Atoi(b[7].(string)), Atoi(b[8].(string)),
+						Atoi(b[9].(string)), Atoi(b[10].(string)), Atoi(b[11].(string)),
+						Atoi(b[12].(string)), Atoi(b[13].(string))})
 				}
 			}
 		}
@@ -577,7 +605,7 @@ Debug Options:
 	// Append keyconfig to keyconfig? based on the MaxAttachtedChar value
 	for i := 0; i < MaxAttachedChar; i++ {
 		sys.keyConfig = append(sys.keyConfig, KeyConfig{-1, -1, -1, -1,
-			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1})
+			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1})
 	}
 	//os.Mkdir("debug", os.ModeSticky|0755)
 
@@ -600,8 +628,8 @@ Debug Options:
 	fmt.Println("Controller 2 present: ", glfw.Joystick2.Present())
 	fmt.Println("Controller 3 present: ", glfw.Joystick3.Present())
 	fmt.Println("Controller 4 present: ", glfw.Joystick4.Present())
-	l := sys.init(tmp.GameWidth, tmp.GameHeight)
-	if err := l.DoFile(tmp.System); err != nil {
+	sys.luaLState = sys.init(tmp.GameWidth, tmp.GameHeight)
+	if err := sys.luaLState.DoFile(tmp.System); err != nil {
 		fmt.Fprintln(log, err)
 		switch err.(type) {
 		case *lua.ApiError:
