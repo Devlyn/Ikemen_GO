@@ -3349,6 +3349,8 @@ if main.flags['-stresstest'] ~= nil then
 	os.exit()
 end
 
+-- call this as late as possible to make sure prior objects/functions are loaded
+require('external.script.extend')
 main.menu.loop()
 
 -- Debug Info
