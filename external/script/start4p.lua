@@ -77,7 +77,7 @@ function start.f_remapAI()
     --Offset
     local offset = 0
     if config.AIRamping and (gamemode('arcade') or gamemode('teamcoop') or gamemode('netplayteamcoop') or gamemode('survival') or gamemode('survivalcoop') or gamemode('netplaysurvivalcoop')) then
-        offset = t_aiRamp[matchNo] - config.Difficulty
+        offset = startconfig.t_aiRamp[startconfig.matchNo] - config.Difficulty
     end
     --Player 1
     if main.coop then
@@ -825,8 +825,16 @@ function start4p.f_select4pScreen()
                 end
             end
             for i = #startconfig.t_p1Selected, 1, -1 do
-                if #t_portrait < motif.select_info.p1_face_num then
-                    table.insert(t_portrait, startconfig.t_p1Selected[i].ref)
+                if (gamemode('4pversus') or gamemode('4pcoop')) then
+                    if i == 1 then
+                        if #t_portrait < motif.select_info.p1_face_num then
+                            table.insert(t_portrait, startconfig.t_p1Selected[i].ref)
+                        end
+                    end
+                else
+                    if #t_portrait < motif.select_info.p1_face_num then
+                        table.insert(t_portrait, startconfig.t_p1Selected[i].ref)
+                    end
                 end
             end
             t_portrait = main.f_tableReverse(t_portrait)
@@ -867,8 +875,16 @@ function start4p.f_select4pScreen()
                 end
             end
             for i = #startconfig.t_p2Selected, 1, -1 do
-                if #t_portrait < motif.select_info.p2_face_num then
-                    table.insert(t_portrait, startconfig.t_p2Selected[i].ref)
+                if (gamemode('4pversus') or gamemode('4pcoop')) then
+                    if i == 1 then
+                        if #t_portrait < motif.select_info.p2_face_num then
+                            table.insert(t_portrait, startconfig.t_p2Selected[i].ref)
+                        end
+                    end
+                else
+                    if #t_portrait < motif.select_info.p2_face_num then
+                        table.insert(t_portrait, startconfig.t_p2Selected[i].ref)
+                    end
                 end
             end
             t_portrait = main.f_tableReverse(t_portrait)
@@ -1099,14 +1115,14 @@ function start4p.f_select4pScreen()
         end
         --Player3 team menu
         if not startconfig.p1TeamEnd then
-            start4p.f_p3TeamMenu()
+            --start4p.f_p3TeamMenu()
             --Player3 select
         elseif main.t_pIn[3] > 0 or main.p3Char ~= nil then
             start4p.f_p3SelectMenu()
         end
         --Player4 team menu
         if not startconfig.p2TeamEnd then
-            start4p.f_p4TeamMenu()
+            --start4p.f_p4TeamMenu()
             --Player4 select
         elseif main.t_pIn[4] > 0 or main.p4Char ~= nil then
             start4p.f_p4SelectMenu()
