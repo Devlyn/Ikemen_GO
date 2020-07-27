@@ -415,7 +415,7 @@ end
 function menu.commandlistRender(section, t)
     main.f_cmdInput()
     local cmdList = {}
-    if t.commandlist ~= nil then
+    if t ~= nil and t.commandlist ~= nil then
         cmdList = t.commandlist
     else
         table.insert(cmdList, {{glyph = false, text = motif[section].movelist_text_text, align = 1, col = {}}})
