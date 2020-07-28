@@ -1,10 +1,9 @@
 local start = require('external.script.start')
 local motif = require('external.script.motif4p')
 local startconfig = start.getStartConfig()
-
-startconfig.motif = motif
 local start4p = {}
 
+startconfig.motif = motif
 startconfig.p3RowOffset = 0
 startconfig.p4RowOffset = 0
 startconfig.p3FaceX = 0
@@ -31,8 +30,8 @@ startconfig.p4SelX = 0
 startconfig.p4SelY = 0
 startconfig.p3Cell = false
 startconfig.p4Cell = false
-start.p1TeamMode = 1
-start.p2TeamMode = 1
+startconfig.p1TeamMode = 1
+startconfig.p2TeamMode = 1
 
 startconfig.txt_p3Name = text:create({
     font =   motif.select_info.p3_name_font[1],

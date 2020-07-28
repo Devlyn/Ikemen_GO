@@ -1,4 +1,9 @@
+local common = require('external.script.common.common')
+local configservice = require('external.script.service.configservice')
+local statsservice = require('external.script.service.statsservice')
+
 main = {}
+
 --nClock = os.clock()
 --print("Elapsed time: " .. os.clock() - nClock)
 --;===========================================================
@@ -11,21 +16,17 @@ if main.flags['-config'] == nil then main.flags['-config'] = 'save/config.json' 
 if main.flags['-stats'] == nil then main.flags['-stats'] = 'save/stats.json' end
 
 --One-time load of the json routines
-json = (loadfile 'external/script/dkjson.lua')()
+json = common.getJSONparser()
 
 --Data loading from config.json
-local file = io.open(main.flags['-config'], 'r')
-config = json.decode(file:read("*all"))
-file:close()
+config = configservice:getConfig()
 
 if config.SafeLoading then
 	setGCPercent(-1)
 end
 
 --Data loading from stats.json
-file = io.open(main.flags['-stats'], 'r')
-stats = json.decode(file:read("*all"))
-file:close()
+stats = statsservice:getStats()
 
 --;===========================================================
 --; COMMON FUNCTIONS
@@ -1228,7 +1229,8 @@ end
 --;===========================================================
 --; LOAD DATA
 --;===========================================================
-motif = require('external.script.motif')
+local motiffile = require('external.script.motif')
+motif = motiffile.getMotifData()
 
 setMotifDir(motif.fileDir)
 
@@ -3356,3 +3358,5 @@ main.menu.loop()
 -- Debug Info
 --main.motifData = nil
 --if main.debugLog then main.f_printTable(main, "debug/t_main.txt") end
+
+return main

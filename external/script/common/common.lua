@@ -1,18 +1,22 @@
---One-time load of the json routines
-local json = (loadfile 'external/script/dkjson.lua')()
+Common = {}
 
 -- Get the one lime loaded JsonParser
-function getJSONparser()
+function Common:getJSONparser()
+    --One-time load of the json routines
+    local json
+    if json == nil then
+        json = (loadfile 'external/script/dkjson.lua')()
+    end
     return json
 end
 
 --debug table printing
-function pt(t)
+function Common:pt(t)
     print(table.concat(t, ','))
 end
 
 --check if a file or directory exists in this path
-function f_exists(file)
+function Common:f_exists(file)
     local ok, err, code = os.rename(file, file)
     if not ok then
         if code == 13 then
@@ -24,13 +28,13 @@ function f_exists(file)
 end
 
 --check if a directory exists in this path
-function f_isdir(path)
+function Common:f_isdir(path)
     -- "/" works on both Unix and Windows
     return f_exists(path .. '/')
 end
 
 --check if file exists
-function f_fileExists(file)
+function Common:f_fileExists(file)
     if file == '' then
         return false
     end
@@ -43,7 +47,7 @@ function f_fileExists(file)
 end
 
 --fix for wrong x coordinate after flipping text/sprite (this should be fixed on source code level at some point)
-function alignOffset(align)
+function Common:alignOffset(align)
     if align == -1 then
         return 1
     end
@@ -51,7 +55,7 @@ function alignOffset(align)
 end
 
 --return table with key names
-function f_extractKeys(str)
+function Common:f_extractKeys(str)
     local t = {}
     for i, c in ipairs(main.f_strsplit('%s*&%s*', str)) do --split string using "%s*&%s*" delimiter
         t[i] = c
@@ -62,9 +66,11 @@ end
 -- return a file with given accesProperty
 -- @param motifFile the file to be retrieved
 -- @param accesProperty the provided accesProperty (Read r, Write w+)
-function getFile(motifFile, accesProperty)
+function Common:getFile(motifFile, accesProperty)
     local file = io.open(motifFile, accesProperty)
     local content = file:read("*all")
     file:close()
     return content
 end
+
+return Common
