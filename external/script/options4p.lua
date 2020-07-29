@@ -168,9 +168,6 @@ local t_keyCfg = {
     {data = f_keyCfgText(), itemname = 'back', displayname = motif.option_info.menu_itemname_key_back, infodata = f_keyCfgText(), infodisplay = ''},
 }
 
-
-
-
 local txt_keyController = f_keyCfgText()
 local cursorPosY = 2
 local item = 2

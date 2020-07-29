@@ -1,6 +1,9 @@
 local common = require('external.script.common.common')
 local configservice = require('external.script.service.configservice')
 local statsservice = require('external.script.service.statsservice')
+local MainData = require('external.script.objects.maindata')
+
+
 
 main = {}
 
@@ -28,12 +31,18 @@ end
 --Data loading from stats.json
 stats = statsservice:getStats()
 
+local maindata = MainData:new(nil, config)
+
 --;===========================================================
 --; COMMON FUNCTIONS
 --;===========================================================
 --add default commands
-main.t_commands = {
+function main.f_initCommandsTable()
+	main.t_commands = {
 	['$U'] = 0, ['$D'] = 0, ['$B'] = 0, ['$F'] = 0, ['a'] = 0, ['b'] = 0, ['c'] = 0, ['x'] = 0, ['y'] = 0, ['z'] = 0, ['s'] = 0, ['d'] = 0, ['w'] = 0, ['m'] = 0, ['/s'] = 0, ['/d'] = 0, ['/w'] = 0}
+end
+main.f_initCommandsTable()
+
 function main.f_commandNew()
 	local c = commandNew()
 	for k, v in pairs(main.t_commands) do
@@ -42,14 +51,17 @@ function main.f_commandNew()
 	return c
 end
 
-main.t_players = {}
-main.t_cmd = {}
-main.t_pIn = {}
-for i = 1, #config.KeyConfig do
-	table.insert(main.t_players, i)
-	table.insert(main.t_cmd, main.f_commandNew())
-	table.insert(main.t_pIn, i)
+function main.f_initPlayers()
+	main.t_players = {}
+	main.t_cmd = {}
+	main.t_pIn = {}
+	for i = 1, #config.KeyConfig do
+		table.insert(main.t_players, i)
+		table.insert(main.t_cmd, main.f_commandNew())
+		table.insert(main.t_pIn, i)
+	end
 end
+main.f_initPlayers()
 
 --add new commands
 function main.f_commandAdd(cmd)
@@ -116,15 +128,18 @@ function main.f_exists(file)
 	return ok, err
 end
 --check if a directory exists in this path
-function  main.f_isdir(path)
+function main.f_isdir(path)
 	-- "/" works on both Unix and Windows
 	return main.f_exists(path .. '/')
 end
 
-main.debugLog = false
-if main.f_isdir('debug') then
-	main.debugLog = true
+function main.f_checkDebugDir()
+	main.debugLog = false
+	if main.f_isdir('debug') then
+		main.debugLog = true
+	end
 end
+main.f_checkDebugDir()
 
 --check if file exists
 function main.f_fileExists(file)
@@ -219,61 +234,70 @@ function main.f_escapePattern(str)
 	return str:gsub('([^%w])', '%%%1')
 end
 
---command line global flags
-if main.flags['-ailevel'] ~= nil then
-	config.Difficulty = math.max(1, math.min(tonumber(main.flags['-ailevel']), 8))
-end
-if main.flags['-speed'] ~= nil then
-	config.GameSpeed = math.max(10, math.min(tonumber(main.flags['-speed']), 200))
-end
-if main.flags['-speedtest'] ~= nil then
-	setGameSpeed(100)
-end
-if main.flags['-nosound'] ~= nil then
-	setVolumeMaster(0)
-end
-if main.flags['-togglelifebars'] ~= nil then
-	toggleStatusDraw()
-end
-if main.flags['-maxpowermode'] ~= nil then
-	toggleMaxPowerMode()
-end
-
---motif
-main.motifDef = config.Motif
-if main.flags['-r'] ~= nil or main.flags['-rubric'] ~= nil then
-	local case = main.flags['-r']:lower() or main.flags['-rubric']:lower()
-	if case:match('^data[/\\]') and main.f_fileExists(main.flags['-r']) then
-		main.motifDef = main.flags['-r'] or main.flags['-rubric']
-	elseif case:match('%.def$') and main.f_fileExists('data/' .. main.flags['-r']) then
-		main.motifDef = 'data/' .. (main.flags['-r'] or main.flags['-rubric'])
-	elseif main.f_fileExists('data/' .. main.flags['-r'] .. '/system.def') then
-		main.motifDef = 'data/' .. (main.flags['-r'] or main.flags['-rubric']) .. '/system.def'
+function main.f_initCommandLineFlags()
+	--command line global flags
+	if main.flags['-ailevel'] ~= nil then
+		config.Difficulty = math.max(1, math.min(tonumber(main.flags['-ailevel']), 8))
+	end
+	if main.flags['-speed'] ~= nil then
+		config.GameSpeed = math.max(10, math.min(tonumber(main.flags['-speed']), 200))
+	end
+	if main.flags['-speedtest'] ~= nil then
+		setGameSpeed(100)
+	end
+	if main.flags['-nosound'] ~= nil then
+		setVolumeMaster(0)
+	end
+	if main.flags['-togglelifebars'] ~= nil then
+		toggleStatusDraw()
+	end
+	if main.flags['-maxpowermode'] ~= nil then
+		toggleMaxPowerMode()
 	end
 end
+main.f_initCommandLineFlags()
+
+--motif
+function main.f_loadSystemDef()
+	main.motifDef = config.Motif
+	if main.flags['-r'] ~= nil or main.flags['-rubric'] ~= nil then
+		local case = main.flags['-r']:lower() or main.flags['-rubric']:lower()
+		if case:match('^data[/\\]') and main.f_fileExists(main.flags['-r']) then
+			main.motifDef = main.flags['-r'] or main.flags['-rubric']
+		elseif case:match('%.def$') and main.f_fileExists('data/' .. main.flags['-r']) then
+			main.motifDef = 'data/' .. (main.flags['-r'] or main.flags['-rubric'])
+		elseif main.f_fileExists('data/' .. main.flags['-r'] .. '/system.def') then
+			main.motifDef = 'data/' .. (main.flags['-r'] or main.flags['-rubric']) .. '/system.def'
+		end
+	end
+	main.motifData = common:getFile(main.motifDef, 'r')
+end
+main.f_loadSystemDef()
 
 --lifebar
-local file = io.open(main.motifDef, 'r')
-main.motifData = file:read("*all")
-file:close()
-local fileDir = main.motifDef:match('^(.-)[^/\\]+$')
-if main.flags['-lifebar'] ~= nil then
-	main.lifebarDef = main.flags['-lifebar']
-else
-	main.lifebarDef = main.motifData:match('\n%s*fight%s*=%s*(.-%.def)%s*')
+--local file = io.open(main.motifDef, 'r')
+--main.motifData = file:read("*all")
+--file:close()
+
+function main.f_loadLifeBarDef()
+	local fileDir = main.motifDef:match('^(.-)[^/\\]+$')
+	if main.flags['-lifebar'] ~= nil then
+		main.lifebarDef = main.flags['-lifebar']
+	else
+		main.lifebarDef = main.motifData:match('\n%s*fight%s*=%s*(.-%.def)%s*')
+	end
+	if main.f_fileExists(main.lifebarDef) then
+		main.lifebarDef = main.lifebarDef
+	elseif main.f_fileExists(fileDir .. main.lifebarDef) then
+		main.lifebarDef = fileDir .. main.lifebarDef
+	elseif main.f_fileExists('data/' .. main.lifebarDef) then
+		main.lifebarDef = 'data/' .. main.lifebarDef
+	else
+		main.lifebarDef = 'data/fight.def'
+	end
+	main.lifebarData = common:getFile(main.lifebarDef, 'r')
 end
-if main.f_fileExists(main.lifebarDef) then
-	main.lifebarDef = main.lifebarDef
-elseif main.f_fileExists(fileDir .. main.lifebarDef) then
-	main.lifebarDef = fileDir .. main.lifebarDef
-elseif main.f_fileExists('data/' .. main.lifebarDef) then
-	main.lifebarDef = 'data/' .. main.lifebarDef
-else
-	main.lifebarDef = 'data/fight.def'
-end
-file = io.open(main.lifebarDef, 'r')
-main.lifebarData = file:read("*all")
-file:close()
+main.f_loadLifeBarDef()
 refresh()
 
 --localcoord

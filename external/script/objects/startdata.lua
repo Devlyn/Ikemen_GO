@@ -1,4 +1,3 @@
-require('external.script.util.dump')
 Startdata = {
     --default team count after starting the game
     p1NumRatio = 1,
