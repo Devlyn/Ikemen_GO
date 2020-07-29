@@ -16,7 +16,7 @@ end
 
 --data saving to stats.json
 function StatsService:saveStats()
-    file = io.open("save/stats.json","w+")
+    local file = io.open("save/stats.json","w+")
     file:write(self.json.encode(self.getStats(), {indent = true}))
     file:close()
 end

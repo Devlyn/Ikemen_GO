@@ -30,7 +30,7 @@ end
 --check if a directory exists in this path
 function Common:f_isdir(path)
     -- "/" works on both Unix and Windows
-    return f_exists(path .. '/')
+    return self:f_exists(path .. '/')
 end
 
 --check if file exists
