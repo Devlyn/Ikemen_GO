@@ -182,6 +182,7 @@ local btnReleased = false
 local player = 3
 local btn = ''
 local joyNum = 2
+local modified = false
 
 local function f_keyCfgReset4p(cfgType)
     t_keyList = {}

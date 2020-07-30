@@ -17,7 +17,7 @@ end
 --save configuration
 function ConfigService:saveConfig()
     --Data saving to config.json
-    file = io.open("save/config.json","w+")
+    local file = io.open("save/config.json","w+")
     file:write(self.json.encode(self.getConfig(), {indent = true}))
     file:close()
 end

@@ -805,6 +805,7 @@ function start4p.f_select4pScreen()
         main.txt_mainSelect:draw()
         if startconfig.p1Cell then
             --draw p1 portrait
+            print('Inside p1 Cell')
             local t_portrait = {}
             if #startconfig.t_p1Selected < startconfig.p1NumChars then
                 if start.f_selGrid(startconfig.p1Cell + 1).char == 'randomselect' or start.f_selGrid(startconfig.p1Cell + 1).hidden == 3 then
@@ -855,6 +856,7 @@ function start4p.f_select4pScreen()
         end
         if startconfig.p2Cell then
             --draw p2 portrait
+            print('Inside p2 Cell')
             local t_portrait = {}
             if #startconfig.t_p2Selected < startconfig.p2NumChars then
                 if start.f_selGrid(startconfig.p2Cell + 1).char == 'randomselect' or start.f_selGrid(startconfig.p2Cell + 1).hidden == 3 then
@@ -905,6 +907,7 @@ function start4p.f_select4pScreen()
         end
         if startconfig.p3Cell then
             --draw p3 portrait
+            print('Inside p3 Cell')
             local t_portrait = {}
             if #startconfig.t_p3Selected < startconfig.p3NumChars then
                 if start.f_selGrid(startconfig.p3Cell + 1).char == 'randomselect' or start.f_selGrid(startconfig.p3Cell + 1).hidden == 3 then
@@ -947,6 +950,7 @@ function start4p.f_select4pScreen()
         end
         if startconfig.p4Cell then
             --draw p4 portrait
+            print('Inside p4 Cell')
             local t_portrait = {}
             if #startconfig.t_p4Selected < startconfig.p4NumChars then
                 if start.f_selGrid(startconfig.p4Cell + 1).char == 'randomselect' or start.f_selGrid(startconfig.p4Cell + 1).hidden == 3 then
@@ -1775,7 +1779,7 @@ function start4p.f_p3SelectMenu()
         return
         --manual selection
     elseif not startconfig.p3SelEnd then
-        resetgrid = false
+        startconfig.resetgrid = false
         --cell movement
         if startconfig.p3RestoreCursor and startconfig.t_p3Cursor[startconfig.p3NumChars - #startconfig.t_p3Selected] ~= nil then --restore saved position
             startconfig.p3SelX = startconfig.t_p3Cursor[startconfig.p3NumChars - #startconfig.t_p3Selected][1]
