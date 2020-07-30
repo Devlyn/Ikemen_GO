@@ -1,8 +1,7 @@
 local motiffile = require('external.script.motif')
 local motif = motiffile.getMotifData()
 
-local function addAdditionDefaults(motif)
-    -- todo should refactor config to be passed along, so it's configurable
+local function addAdditionDefaults(motif, config)
     -- Need to circumvent the loading or let it happen after this params have been assigned.
     motif['option_info'].menu_item_p3_pos = {91, 33}
     motif['option_info'].menu_item_p4_pos = {230, 33}
@@ -97,7 +96,7 @@ local function addAdditionDefaults(motif)
     motif['select_info'].p3_select_snd = {-1, 0} --Ikemen feature
     motif['select_info'].p4_select_snd = {-1, 0} --Ikemen feature
 end
-addAdditionDefaults(motif)
+addAdditionDefaults(motif, config)
 
 local function updateScreenpackData(t)
     local pos = t
@@ -214,6 +213,8 @@ updateScreenpackData(t)
 --merge tables
 motif = main.f_tableMerge(motif, t)
 
+local anim = ''
+local facing = ''
 local function f_facing(var)
     if var == -1 then
         return 'H'

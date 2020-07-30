@@ -3,8 +3,6 @@ local configservice = require('external.script.service.configservice')
 local statsservice = require('external.script.service.statsservice')
 local MainData = require('external.script.objects.maindata')
 
-
-
 main = {}
 
 --nClock = os.clock()
@@ -19,7 +17,7 @@ if main.flags['-config'] == nil then main.flags['-config'] = 'save/config.json' 
 if main.flags['-stats'] == nil then main.flags['-stats'] = 'save/stats.json' end
 
 --One-time load of the json routines
-json = common.getJSONparser()
+json = common:getJSONparser()
 
 --Data loading from config.json
 config = configservice:getConfig()
@@ -127,6 +125,7 @@ function main.f_exists(file)
 	end
 	return ok, err
 end
+
 --check if a directory exists in this path
 function main.f_isdir(path)
 	-- "/" works on both Unix and Windows
@@ -234,6 +233,7 @@ function main.f_escapePattern(str)
 	return str:gsub('([^%w])', '%%%1')
 end
 
+--
 function main.f_initCommandLineFlags()
 	--command line global flags
 	if main.flags['-ailevel'] ~= nil then
@@ -313,228 +313,11 @@ end
 
 main.font = {}
 main.font_def = {}
-text = {}
-color = {}
-rect = {}
---create text
-function text:create(t)
-	--default values
-	if t.window == nil then t.window = {} end
-	local o = {
-		font = t.font or -1,
-		bank = t.bank or 0,
-		align = t.align or 0,
-		text = t.text or '',
-		x = t.x or 0,
-		y = t.y or 0,
-		scaleX = t.scaleX or 1,
-		scaleY = t.scaleY or 1,
-		r = t.r or 255,
-		g = t.g or 255,
-		b = t.b or 255,
-		src = t.src or 255,
-		dst = t.dst or 0,
-		height = t.height or -1,
-		window = {
-			t.window[1] or 0,
-			t.window[2] or 0,
-			t.window[3] or motif.info.localcoord[1],
-			t.window[4] or motif.info.localcoord[2]
-		},
-		defsc = t.defsc or false
-	}
-	o.ti = textImgNew()
-	setmetatable(o, self)
-	self.__index = self
-	if o.font ~= -1 then
-		if main.font[o.font .. o.height] == nil then
-			main.font[o.font .. o.height] = fontNew(o.font, o.height)
-		end
-		if main.font_def[o.font .. o.height] == nil then
-			main.font_def[o.font .. o.height] = fontGetDef(main.font[o.font .. o.height])
-		end
-		textImgSetFont(o.ti, main.font[o.font .. o.height])
-	end
-	textImgSetBank(o.ti, o.bank)
-	textImgSetAlign(o.ti, o.align)
-	textImgSetText(o.ti, o.text)
-	textImgSetColor(o.ti, o.r, o.g, o.b, o.src, o.dst)
-	if o.defsc then main.f_disableLuaScale() end
-	textImgSetPos(o.ti, o.x + main.f_alignOffset(o.align), o.y)
-	textImgSetScale(o.ti, o.scaleX, o.scaleY)
-	textImgSetWindow(o.ti, o.window[1], o.window[2], o.window[3] - o.window[1], o.window[4] - o.window[2])
-	if o.defsc then main.f_setLuaScale() end
-	return o
-end
 
---update text
-function text:update(t)
-	local ok = false
-	local fontChange = false
-	for k, v in pairs(t) do
-		if self[k] ~= v then
-			if k == 'font' or k == 'height' then
-				fontChange = true
-			end
-			self[k] = v
-			ok = true
-		end
-	end
-	if not ok then return end
-	if fontChange and self.font ~= -1 then
-		if main.font[self.font .. self.height] == nil then
-			main.font[self.font .. self.height] = fontNew(self.font, self.height)
-		end
-		if main.font_def[self.font .. self.height] == nil then
-			main.font_def[self.font .. self.height] = fontGetDef(main.font[self.font .. self.height])
-		end
-		textImgSetFont(self.ti, main.font[self.font .. self.height])
-	end
-	textImgSetBank(self.ti, self.bank)
-	textImgSetAlign(self.ti, self.align)
-	textImgSetText(self.ti, self.text)
-	textImgSetColor(self.ti, self.r, self.g, self.b, self.src, self.dst)
-	if self.defsc then main.f_disableLuaScale() end
-	textImgSetPos(self.ti, self.x + main.f_alignOffset(self.align), self.y)
-	textImgSetScale(self.ti, self.scaleX, self.scaleY)
-	textImgSetWindow(self.ti, self.window[1], self.window[2], self.window[3] - self.window[1], self.window[4] - self.window[2])
-	if self.defsc then main.f_setLuaScale() end
-end
-
---draw text
-function text:draw()
-	if self.font == -1 then return end
-	textImgDraw(self.ti)
-end
-
---create color
-function color:new(r, g, b, src, dst)
-	local n = {r = r or 255, g = g or 255, b = b or 255, src = src or 255, dst = dst or 0}
-	setmetatable(n, self)
-	self.__index = self
-	return n
-end
-
---adds rgb (color + color)
-function color.__add(a, b)
-	local r = math.max(0, math.min(a.r + b.r, 255))
-	local g = math.max(0, math.min(a.g + b.g, 255))
-	local b = math.max(0, math.min(a.b + b.b, 255))
-	return color:new(r, g, b, a.src, a.dst)
-end
-
---substracts rgb (color - color)
-function color.__sub(a, b)
-	local r = math.max(0, math.min(a.r - b.r, 255))
-	local g = math.max(0, math.min(a.g - b.g, 255))
-	local b = math.max(0, math.min(a.b - b.b, 255))
-	return color:new(r, g, b, a.src, a.dst)
-end
-
---multiply blend (color * color)
-function color.__mul(a, b)
-	local r = (a.r / 255) * (b.r / 255) * 255
-	local g = (a.g / 255) * (b.g / 255) * 255
-	local b = (a.b / 255) * (b.b / 255) * 255
-	return color:new(r, g, b, a.src, a.dst)
-end
-
---compares r, g, b, src, and dst (color == color)
-function color.__eq(a, b)
-	if a.r == b.r and a.g == b.g and a.b == b.b and a.src == b.src and a.dst == b.dst then
-		return true
-	else
-		return false
-	end
-end
-
---create color from hex value
-function color:fromHex(h)
-	h = tostring(h)
-	if h:sub(0, 1) =="#" then h = h:sub(2, -1) end
-	if h:sub(0, 2) =="0x" then h = h:sub(3, -1) end
-	local r = tonumber(h:sub(1, 2), 16)
-	local g = tonumber(h:sub(3, 4), 16)
-	local b = tonumber(h:sub(5, 6), 16)
-	local src = tonumber(h:sub(7, 8), 16) or 255
-	local dst = tonumber(h:sub(9, 10), 16) or 0
-	return color:new(r, g, b, src, dst)
-end
-
---create string of color converted to hex
-function color:toHex(lua)
-	local r = string.format("%x", self.r)
-	local g = string.format("%x", self.g)
-	local b = string.format("%x", self.b)
-	local src = string.format("%x", self.src)
-	local dst = string.format("%x", self.dst)
-	local hex = tostring((r:len() < 2 and "0") .. r .. (g:len() < 2 and "0") .. g .. (b:len() < 2 and "0") .. b ..(src:len() < 2 and "0") .. src .. (dst:len() < 2 and "0") .. dst)
-	return hex
-end
-
---returns r, g, b, src, dst
-function color:unpack()
-	return tonumber(self.r), tonumber(self.g), tonumber(self.b), tonumber(self.src), tonumber(self.dst)
-end
-
---create a rect
-function rect:create(...)
-	local args = ...
-	args.x1 = args.x or args.x1
-	args.y1 = args.y or args.y1
-	if args.dim or args.dimensions then
-		--create dimensions if arguments have a dim or dimensions argument instead of x1, y1, x2, y2
-		local dim = args.dim or args.dimensions
-		args.x1 = dim.x1 or dim[1] or args.x1
-		args.y1 = dim.y1 or dim[2] or args.y1
-		args.x2 = dim.x2 or dim[3] or args.x2
-		args.y2 = dim.y2 or dim[4] or args.y2
-	elseif args.scale or args.size then
-		--create x2,y2 if arguments have a scale or size argument
-		local sc = args.scale or args.size
-		args.x2 = sc.x or sc[1]
-		args.y2 = sc.y or sc[2]
-	end
-	args.color = args.color or color:new(args.r, args.g, args.b, args.src, args.dst)
-	args.r, args.g, args.b, args.src, args.dst = args.color:unpack()
-	setmetatable(args, self)
-	self.__index = self
-	return args
-end
-
---modify the rect
-function rect:update(...)
-	local args = ...
-	local env = setfenv(1, args)
-	self.x1 = x or x1 or self.x1
-	self.y1 = y or y1 or self.y1
-	for i, k in pairs(args) do
-		self[i] = k
-	end
-	if dim or dimensions then
-		--create dimensions if arguments have a dim or dimensions argument instead of x1, y1, x2, y2
-		local dim = args.dim or args.dimensions
-		self.x1 = dim.x1 or dim[1] or x1 or self.x1
-		self.y1 = dim.y1 or dim[2] or y1 or self.y1
-		self.x2 = dim.x2 or dim[3] or x2 or self.x2
-		self.y2 = dim.y2 or dim[4] or y2 or self.y2
-	elseif scale or size then
-		--create x2,y2 if arguments have a scale or size argument
-		local sc = args.scale or args.size
-		self.x2 = sc.x or sc[1] or self.x2
-		self.y2 = sc.y or sc[2] or self.y2
-	end
-	if r or g or b or src or dst then
-		self.color = color:new(r or self.r, g or self.g, b or self.b, src or self.src, dst or self.dst)
-	end
-	return self
-end
-
---draw the rect using fillRect
-function rect:draw()
-	local r, g, b, s, d = self.color:unpack()
-	fillRect(self.x1, self.y1, self.x2, self.y2, r, g, b, s, d, self.defsc or false, self.fixcoord or false)
-end
+local ColorUtils = require('external.script.util.colorutils')
+color = ColorUtils:getColor()
+local RectangleUtils = require('external.script.util.rectangleutils')
+rect = RectangleUtils:getRectangle(color)
 
 --refreshing screen after delayed animation progression to next frame
 main.t_animUpdate = {}
@@ -1116,145 +899,151 @@ require('external.script.global')
 --;===========================================================
 --; COMMAND LINE QUICK VS
 --;===========================================================
-if main.flags['-p1'] ~= nil and main.flags['-p2'] ~= nil then
-	local chars = {}
-	local ref = 0
-	local p1TeamMode = 0
-	local p2TeamMode = 0
-	local p1NumChars = 0
-	local p2NumChars = 0
-	local roundTime = config.RoundTime
-	loadLifebar(main.lifebarDef)
-	local frames = getTimeFramesPerCount()
-	main.f_updateRoundsNum()
-	local matchWins = {main.roundsNumSingle, main.roundsNumTeam, main.maxDrawGames}
-	local t = {}
-	for k, v in pairs(main.flags) do
-		if k:match('^-p[0-9]+$') then
-			local num = tonumber(k:match('^-p([0-9]+)'))
-			local player = 1
-			if num % 2 == 0 then --even value
-				player = 2
-				p2NumChars = p2NumChars + 1
-			else
-				p1NumChars = p1NumChars + 1
+function main:f_launchQuickVS()
+	if main.flags['-p1'] ~= nil and main.flags['-p2'] ~= nil then
+		local chars = {}
+		local ref = 0
+		local p1TeamMode = 0
+		local p2TeamMode = 0
+		local p1NumChars = 0
+		local p2NumChars = 0
+		local roundTime = config.RoundTime
+		loadLifebar(main.lifebarDef)
+		local frames = getTimeFramesPerCount()
+		main.f_updateRoundsNum()
+		local matchWins = {main.roundsNumSingle, main.roundsNumTeam, main.maxDrawGames}
+		local t = {}
+		for k, v in pairs(main.flags) do
+			if k:match('^-p[0-9]+$') then
+				local num = tonumber(k:match('^-p([0-9]+)'))
+				local player = 1
+				if num % 2 == 0 then --even value
+					player = 2
+					p2NumChars = p2NumChars + 1
+				else
+					p1NumChars = p1NumChars + 1
+				end
+				local pal = 1
+				if main.flags['-p' .. num .. '.pal'] ~= nil then
+					pal = tonumber(main.flags['-p' .. num .. '.pal'])
+				end
+				local ai = 0
+				if main.flags['-p' .. num .. '.ai'] ~= nil then
+					ai = tonumber(main.flags['-p' .. num .. '.ai'])
+				end
+				table.insert(t, {character = v, player = player, num = num, pal = pal, ai = ai, override = {}})
+				if main.flags['-p' .. num .. '.power'] ~= nil then
+					t[#t].override['power'] = tonumber(main.flags['-p' .. num .. '.power'])
+				end
+				if main.flags['-p' .. num .. '.guardPoints'] ~= nil then
+					t[#t].override['guardPoints'] = tonumber(main.flags['-p' .. num .. '.guardPoints'])
+				end
+				if main.flags['-p' .. num .. '.dizzyPoints'] ~= nil then
+					t[#t].override['dizzyPoints'] = tonumber(main.flags['-p' .. num .. '.dizzyPoints'])
+				end
+				if main.flags['-p' .. num .. '.life'] ~= nil then
+					t[#t].override['life'] = tonumber(main.flags['-p' .. num .. '.life'])
+				end
+				if main.flags['-p' .. num .. '.lifeMax'] ~= nil then
+					t[#t].override['lifeMax'] = tonumber(main.flags['-p' .. num .. '.lifeMax'])
+				end
+				if main.flags['-p' .. num .. '.lifeRatio'] ~= nil then
+					t[#t].override['lifeRatio'] = tonumber(main.flags['-p' .. num .. '.lifeRatio'])
+				end
+				if main.flags['-p' .. num .. '.attackRatio'] ~= nil then
+					t[#t].override['attackRatio'] = tonumber(main.flags['-p' .. num .. '.attackRatio'])
+				end
+				refresh()
+			elseif k:match('^-tmode1$') then
+				p1TeamMode = tonumber(v)
+			elseif k:match('^-tmode2$') then
+				p2TeamMode = tonumber(v)
+			elseif k:match('^-time$') then
+				roundTime = tonumber(v)
+			elseif k:match('^-rounds$') then
+				matchWins[1] = tonumber(v)
+				matchWins[2] = tonumber(v)
+			elseif k:match('^-draws$') then
+				matchWins[3] = tonumber(v)
 			end
-			local pal = 1
-			if main.flags['-p' .. num .. '.pal'] ~= nil then
-				pal = tonumber(main.flags['-p' .. num .. '.pal'])
-			end
-			local ai = 0
-			if main.flags['-p' .. num .. '.ai'] ~= nil then
-				ai = tonumber(main.flags['-p' .. num .. '.ai'])
-			end
-			table.insert(t, {character = v, player = player, num = num, pal = pal, ai = ai, override = {}})
-			if main.flags['-p' .. num .. '.power'] ~= nil then
-				t[#t].override['power'] = tonumber(main.flags['-p' .. num .. '.power'])
-			end
-			if main.flags['-p' .. num .. '.guardPoints'] ~= nil then
-				t[#t].override['guardPoints'] = tonumber(main.flags['-p' .. num .. '.guardPoints'])
-			end
-			if main.flags['-p' .. num .. '.dizzyPoints'] ~= nil then
-				t[#t].override['dizzyPoints'] = tonumber(main.flags['-p' .. num .. '.dizzyPoints'])
-			end
-			if main.flags['-p' .. num .. '.life'] ~= nil then
-				t[#t].override['life'] = tonumber(main.flags['-p' .. num .. '.life'])
-			end
-			if main.flags['-p' .. num .. '.lifeMax'] ~= nil then
-				t[#t].override['lifeMax'] = tonumber(main.flags['-p' .. num .. '.lifeMax'])
-			end
-			if main.flags['-p' .. num .. '.lifeRatio'] ~= nil then
-				t[#t].override['lifeRatio'] = tonumber(main.flags['-p' .. num .. '.lifeRatio'])
-			end
-			if main.flags['-p' .. num .. '.attackRatio'] ~= nil then
-				t[#t].override['attackRatio'] = tonumber(main.flags['-p' .. num .. '.attackRatio'])
-			end
-			refresh()
-		elseif k:match('^-tmode1$') then
-			p1TeamMode = tonumber(v)
-		elseif k:match('^-tmode2$') then
-			p2TeamMode = tonumber(v)
-		elseif k:match('^-time$') then
-			roundTime = tonumber(v)
-		elseif k:match('^-rounds$') then
-			matchWins[1] = tonumber(v)
-			matchWins[2] = tonumber(v)
-		elseif k:match('^-draws$') then
-			matchWins[3] = tonumber(v)
 		end
-	end
-	if p1TeamMode == 0 and p1NumChars > 1 then
-		p1TeamMode = 1
-	end
-	if p2TeamMode == 0 and p2NumChars > 1 then
-		p2TeamMode = 1
-	end
-	local p1FramesMul = 1
-	local p2FramesMul = 1
-	if p1TeamMode == 3 then
-		p1FramesMul = p1NumChars
-	end
-	if p2TeamMode == 3 then
-		p2FramesMul = p2NumChars
-	end
-	frames = frames * math.max(p1FramesMul, p2FramesMul)
-	if p2TeamMode == 0 then
-		setMatchWins(matchWins[1])
-	else
-		setMatchWins(matchWins[2])
-	end
-	setMatchMaxDrawGames(matchWins[3])
-	setTimeFramesPerCount(frames)
-	setRoundTime(math.max(-1, roundTime * frames))
-	setGuardBar(config.BarGuard)
-	setStunBar(config.BarStun)
-	setRedLifeBar(config.BarRedLife)
-	setAutoguard(1, config.AutoGuard)
-	setAutoguard(2, config.AutoGuard)
-	--add stage
-	local stage = 'stages/stage0.def'
-	if main.flags['-s'] ~= nil then
-		if main.f_fileExists(main.flags['-s']) then
-			stage = main.flags['-s']
-		elseif main.f_fileExists('stages/' .. main.flags['-s'] .. '.def') then
-			stage = 'stages/' .. main.flags['-s'] .. '.def'
+		if p1TeamMode == 0 and p1NumChars > 1 then
+			p1TeamMode = 1
 		end
-	end
-	addStage(stage)
-	--load data
-	loadDebugFont(config.DebugFont)
-	selectStart()
-	setMatchNo(1)
-	setStage(0)
-	selectStage(0)
-	setTeamMode(1, p1TeamMode, p1NumChars)
-	setTeamMode(2, p2TeamMode, p2NumChars)
-	if main.debugLog then main.f_printTable(t, 'debug/t_quickvs.txt') end
-	--iterate over the table in -p order ascending
-	for k, v in main.f_sortKeys(t, function(t, a, b) return t[b].num > t[a].num end) do
-		if chars[v.character] == nil then
-			addChar(v.character)
-			chars[v.character] = ref
-			ref = ref + 1
+		if p2TeamMode == 0 and p2NumChars > 1 then
+			p2TeamMode = 1
 		end
-		selectChar(v.player, chars[v.character], v.pal)
-		setCom(v.num, v.ai)
-		overrideCharData(v.num, v.override)
+		local p1FramesMul = 1
+		local p2FramesMul = 1
+		if p1TeamMode == 3 then
+			p1FramesMul = p1NumChars
+		end
+		if p2TeamMode == 3 then
+			p2FramesMul = p2NumChars
+		end
+		frames = frames * math.max(p1FramesMul, p2FramesMul)
+		if p2TeamMode == 0 then
+			setMatchWins(matchWins[1])
+		else
+			setMatchWins(matchWins[2])
+		end
+		setMatchMaxDrawGames(matchWins[3])
+		setTimeFramesPerCount(frames)
+		setRoundTime(math.max(-1, roundTime * frames))
+		setGuardBar(config.BarGuard)
+		setStunBar(config.BarStun)
+		setRedLifeBar(config.BarRedLife)
+		setAutoguard(1, config.AutoGuard)
+		setAutoguard(2, config.AutoGuard)
+		--add stage
+		local stage = 'stages/stage0.def'
+		if main.flags['-s'] ~= nil then
+			if main.f_fileExists(main.flags['-s']) then
+				stage = main.flags['-s']
+			elseif main.f_fileExists('stages/' .. main.flags['-s'] .. '.def') then
+				stage = 'stages/' .. main.flags['-s'] .. '.def'
+			end
+		end
+		addStage(stage)
+		--load data
+		loadDebugFont(config.DebugFont)
+		selectStart()
+		setMatchNo(1)
+		setStage(0)
+		selectStage(0)
+		setTeamMode(1, p1TeamMode, p1NumChars)
+		setTeamMode(2, p2TeamMode, p2NumChars)
+		if main.debugLog then main.f_printTable(t, 'debug/t_quickvs.txt') end
+		--iterate over the table in -p order ascending
+		for k, v in main.f_sortKeys(t, function(t, a, b) return t[b].num > t[a].num end) do
+			if chars[v.character] == nil then
+				addChar(v.character)
+				chars[v.character] = ref
+				ref = ref + 1
+			end
+			selectChar(v.player, chars[v.character], v.pal)
+			setCom(v.num, v.ai)
+			overrideCharData(v.num, v.override)
+		end
+		loadStart()
+		local winner, t_gameStats = game()
+		if main.flags['-log'] ~= nil then
+			main.f_printTable(t_gameStats, main.flags['-log'])
+		end
+		--exit ikemen
+		return
 	end
-	loadStart()
-	local winner, t_gameStats = game()
-	if main.flags['-log'] ~= nil then
-		main.f_printTable(t_gameStats, main.flags['-log'])
-	end
-	--exit ikemen
-	return
 end
+main:f_launchQuickVS()
 
 --;===========================================================
 --; LOAD DATA
 --;===========================================================
 local motiffile = require('external.script.motif')
 motif = motiffile.getMotifData()
+
+local TextUtils = require('external.script.util.textutils')
+text = TextUtils:getText(motif, main)
 
 setMotifDir(motif.fileDir)
 
@@ -1272,6 +1061,7 @@ for _, t in pairs(t_preloading) do
 	end
 end
 
+-- todo Refactor to data object
 main.txt_warning = text:create({})
 main.txt_warningTitle = text:create({
 	font =   motif.warning_info.title_font[1],
@@ -1307,6 +1097,8 @@ main.txt_input = text:create({
 	height = motif.infobox.text_font_height,
 	defsc =  motif.defaultInfobox
 })
+
+-- todo Refactor to function
 local txt_loading = text:create({
 	font =   motif.title_info.loading_font[1],
 	bank =   motif.title_info.loading_font[2],
@@ -3364,15 +3156,23 @@ if config.SafeLoading then
 	setGCPercent(100)
 end
 
-if main.flags['-stresstest'] ~= nil then
-	main.f_default()
-	local frameskip = tonumber(main.flags['-stresstest'])
-	if frameskip >= 1 then
-		setGameSpeed(frameskip + 1)
+
+function main.doStressTest()
+	if main.flags['-stresstest'] ~= nil then
+		main.f_default()
+		local frameskip = tonumber(main.flags['-stresstest'])
+		if frameskip >= 1 then
+			setGameSpeed(frameskip + 1)
+		end
+		setGameMode('randomtest')
+		randomtest.run()
+		os.exit()
 	end
-	setGameMode('randomtest')
-	randomtest.run()
-	os.exit()
+end
+main.doStressTest()
+
+function main.getMainData()
+	return maindata
 end
 
 -- call this as late as possible to make sure prior objects/functions are loaded
@@ -3382,5 +3182,3 @@ main.menu.loop()
 -- Debug Info
 --main.motifData = nil
 --if main.debugLog then main.f_printTable(main, "debug/t_main.txt") end
-
-return main

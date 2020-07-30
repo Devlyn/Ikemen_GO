@@ -1,6 +1,6 @@
 local start = require('external.script.start')
 local motif = require('external.script.motif4p')
-local startconfig = start.getStartConfig()
+local startconfig = start.getStartData()
 local start4p = {}
 
 startconfig.motif = motif

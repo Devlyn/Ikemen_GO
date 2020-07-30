@@ -4051,7 +4051,7 @@ function start.f_stageMusic()
 	end
 end
 
-function start.getStartConfig()
+function start.getStartData()
 	return startdata
 end
 
