@@ -149,7 +149,7 @@ local function updateScreenpackData(t)
                     end
                     local num = tonumber(param:match('font([0-9]+)'))
                     if param:match('_height$') then
-                        pos.font_height[num] = main.f_dataType(value)
+                        pos.font_height[num] = main:f_dataType(value)
                     else
                         value = value:gsub('\\', '/')
                         pos.font[num] = tostring(value)
@@ -167,9 +167,9 @@ local function updateScreenpackData(t)
                         table.insert(pos_sort, param:match('_itemname_(.+)$'))
                         pos[param] = value
                     elseif value:match('.+,.+') then --multiple values
-                        for i, c in ipairs(main.f_strsplit(',', value)) do --split value using "," delimiter
+                        for i, c in ipairs(main:f_strsplit(',', value)) do --split value using "," delimiter
                             if param:match('_anim$') then --mugen recognizes animations even if there are more values
-                                pos[param] = main.f_dataType(c)
+                                pos[param] = main:f_dataType(c)
                                 break
                             elseif i == 1 then
                                 pos[param] = {}
@@ -187,11 +187,11 @@ local function updateScreenpackData(t)
                             if c == nil or c == '' then
                                 table.insert(pos[param], 0)
                             else
-                                table.insert(pos[param], main.f_dataType(c))
+                                table.insert(pos[param], main:f_dataType(c))
                             end
                         end
                     else --single value
-                        pos[param] = main.f_dataType(value)
+                        pos[param] = main:f_dataType(value)
                     end
                 end
             elseif param == nil then --only valid lines left are animations
@@ -204,14 +204,14 @@ local function updateScreenpackData(t)
                 end
             end
         end
-        main.loadingRefresh()
+        main:loadingRefresh()
     end
 end
 local t = motif.select_info
 updateScreenpackData(t)
 
 --merge tables
-motif = main.f_tableMerge(motif, t)
+motif = main:f_tableMerge(motif, t)
 
 local anim = ''
 local facing = ''
@@ -241,7 +241,7 @@ local function f_loadSprData(t, t_dir)
             animSetScale(t[v.s .. 'data'], t[v.s .. 'scale'][1], t[v.s .. 'scale'][2])
             animUpdate(t[v.s .. 'data'])
         elseif t[v.s .. 'anim'] ~= nil and motif.anim[t[v.s .. 'anim']] ~= nil then --create animation data
-            t[v.s .. 'data'] = main.f_animFromTable(
+            t[v.s .. 'data'] = main:f_animFromTable(
                     motif.anim[t[v.s .. 'anim']],
                     motif.files.spr_data,
                     t[v.s .. 'offset'][1] + v.x,
@@ -255,7 +255,7 @@ local function f_loadSprData(t, t_dir)
             animUpdate(t[v.s .. 'data'])
         end
         animSetWindow(t[v.s .. 'data'], 0, 0, motif.info.localcoord[1], motif.info.localcoord[2])
-        main.loadingRefresh()
+        main:loadingRefresh()
     end
 end
 

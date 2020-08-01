@@ -57,7 +57,7 @@ end
 --return table with key names
 function Common:f_extractKeys(str)
     local t = {}
-    for i, c in ipairs(main.f_strsplit('%s*&%s*', str)) do --split string using "%s*&%s*" delimiter
+    for i, c in ipairs(main:f_strsplit('%s*&%s*', str)) do --split string using "%s*&%s*" delimiter
         t[i] = c
     end
     return t

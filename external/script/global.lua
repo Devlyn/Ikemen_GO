@@ -207,8 +207,8 @@ function loop()
         playerBufReset()
         menu.run()
     else
-        main.f_cmdInput()
-        if esc() or main.f_input(main.t_players, {'m'}) then
+        main:f_cmdInput()
+        if esc() or main:f_input(main.t_players, {'m'}) then
             if gamemode('') or gamemode('demo') or gamemode('randomtest') then
                 endMatch()
             else

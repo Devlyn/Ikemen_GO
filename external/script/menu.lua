@@ -7,7 +7,7 @@ menu.itemname = ''
 menu.t_itemname = {
     --Back
     ['back'] = function(cursorPosY, moveTxt, item, t, section)
-        if main.f_input(main.t_players, {'pal', 's'}) then
+        if main:f_input(main.t_players, {'pal', 's'}) then
             if menu.currentMenu[1] == menu.currentMenu[2] then
                 sndPlay(motif.files.snd_data, motif[section].cursor_done_snd[1], motif[section].cursor_done_snd[2])
                 togglePause(false)
@@ -22,7 +22,7 @@ menu.t_itemname = {
     end,
     --Key Config
     ['keyboard'] = function(cursorPosY, moveTxt, item, t, section)
-        if main.f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F1']] then
+        if main:f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F1']] then
             sndPlay(motif.files.snd_data, motif[section].cursor_move_snd[1], motif[section].cursor_move_snd[2])
             options.f_keyCfgInit('KeyConfig', t.submenu[t.items[item].itemname].title)
             menu.itemname = t.items[item].itemname
@@ -31,7 +31,7 @@ menu.t_itemname = {
     end,
     --Joystick Config
     ['gamepad'] = function(cursorPosY, moveTxt, item, t, section)
-        if main.f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F2']] then
+        if main:f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F2']] then
             sndPlay(motif.files.snd_data, motif[section].cursor_move_snd[1], motif[section].cursor_move_snd[2])
             options.f_keyCfgInit('JoystickConfig', t.submenu[t.items[item].itemname].title)
             menu.itemname = t.items[item].itemname
@@ -40,7 +40,7 @@ menu.t_itemname = {
     end,
     --Default
     ['inputdefault'] = function(cursorPosY, moveTxt, item, t, section)
-        if main.f_input(main.t_players, {'pal', 's'}) then
+        if main:f_input(main.t_players, {'pal', 's'}) then
             sndPlay(motif.files.snd_data, motif[section].cursor_done_snd[1], motif[section].cursor_done_snd[2])
             options.f_keyDefault()
             for pn = 1, #config.KeyConfig do
@@ -57,7 +57,7 @@ menu.t_itemname = {
     end,
     --Command List
     ['commandlist'] = function(cursorPosY, moveTxt, item, t, section)
-        if main.f_input(main.t_players, {'pal', 's'}) then
+        if main:f_input(main.t_players, {'pal', 's'}) then
             sndPlay(motif.files.snd_data, motif[section].cursor_done_snd[1], motif[section].cursor_done_snd[2])
             menu.commandlistParse()
             menu.itemname = t.items[item].itemname
@@ -66,7 +66,7 @@ menu.t_itemname = {
     end,
     --Character Change
     ['characterchange'] = function(cursorPosY, moveTxt, item, t, section)
-        if main.f_input(main.t_players, {'pal', 's'}) then
+        if main:f_input(main.t_players, {'pal', 's'}) then
             sndPlay(motif.files.snd_data, motif[section].cursor_done_snd[1], motif[section].cursor_done_snd[2])
             togglePause(false)
             endMatch()
@@ -77,7 +77,7 @@ menu.t_itemname = {
     end,
     --Exit
     ['exit'] = function(cursorPosY, moveTxt, item, t, section)
-        if main.f_input(main.t_players, {'pal', 's'}) then
+        if main:f_input(main.t_players, {'pal', 's'}) then
             sndPlay(motif.files.snd_data, motif[section].cursor_done_snd[1], motif[section].cursor_done_snd[2])
             togglePause(false)
             endMatch()
@@ -94,13 +94,13 @@ function menu.createMenu(tbl, section, bgdef, txt_title, bool_main)
         local t = tbl.items
         if tbl.reset then
             tbl.reset = false
-            main.f_cmdInput()
+            main:f_cmdInput()
         else
-            main.f_menuCommonDraw(tbl.cursorPosY, tbl.moveTxt, tbl.item, t, 'fadein', section, section, bgdef, txt_title, motif.defaultMenu, motif.defaultMenu, false, {}, true)
+            main:f_menuCommonDraw(tbl.cursorPosY, tbl.moveTxt, tbl.item, t, 'fadein', section, section, bgdef, txt_title, motif.defaultMenu, motif.defaultMenu, false, {}, true)
         end
-        tbl.cursorPosY, tbl.moveTxt, tbl.item = main.f_menuCommonCalc(tbl.cursorPosY, tbl.moveTxt, tbl.item, t, section, {'$U'}, {'$D'})
+        tbl.cursorPosY, tbl.moveTxt, tbl.item = main:f_menuCommonCalc(tbl.cursorPosY, tbl.moveTxt, tbl.item, t, section, {'$U'}, {'$D'})
         txt_title:update({text = tbl.title})
-        if esc() or main.f_input(main.t_players, {'m'}) then
+        if esc() or main:f_input(main.t_players, {'m'}) then
             if bool_main then
                 togglePause(false)
                 main.escMenu = false
@@ -113,8 +113,8 @@ function menu.createMenu(tbl, section, bgdef, txt_title, bool_main)
             if not menu.t_itemname[t[tbl.item].itemname](tbl.cursorPosY, tbl.moveTxt, tbl.item, tbl, section) then
                 return
             end
-        elseif main.f_input(main.t_players, {'pal', 's'}) then
-            local f = main.f_checkSubmenu(tbl.submenu[t[tbl.item].itemname], 0, true)
+        elseif main:f_input(main.t_players, {'pal', 's'}) then
+            local f = main:f_checkSubmenu(tbl.submenu[t[tbl.item].itemname], 0, true)
             if tbl.submenu[t[tbl.item].itemname].loop ~= nil then
                 menu.currentMenu[1] = tbl.submenu[t[tbl.item].itemname].loop
             end
@@ -163,7 +163,7 @@ for k, v in pairs(
         }
     end
     menu[v.id] = {
-        title = main.f_itemnameUpper(motif[v.section].title_text, motif[v.section].menu_title_uppercase == 1),
+        title = main:f_itemnameUpper(motif[v.section].title_text, motif[v.section].menu_title_uppercase == 1),
         cursorPosY = 1,
         moveTxt = 0,
         item = 1,
@@ -174,12 +174,12 @@ for k, v in pairs(
     local t_pos = {} --for storing current table position
     local lastNum = 0
     for i = 1, #main.t_sort[v.section] do
-        for j, c in ipairs(main.f_strsplit('_', main.t_sort[v.section][i])) do --split using "_" delimiter
+        for j, c in ipairs(main:f_strsplit('_', main.t_sort[v.section][i])) do --split using "_" delimiter
             --appending the menu table
             if j == 1 then --first string after menu.itemname (either reserved one or custom submenu assignment)
                 if menu[v.id].submenu[c] == nil or c == 'empty' then
                     menu[v.id].submenu[c] = {}
-                    menu[v.id].submenu[c].title = main.f_itemnameUpper(motif[v.section]['menu_itemname_' .. main.t_sort[v.section][i]], motif[v.section].menu_title_uppercase == 1)
+                    menu[v.id].submenu[c].title = main:f_itemnameUpper(motif[v.section]['menu_itemname_' .. main.t_sort[v.section][i]], motif[v.section].menu_title_uppercase == 1)
                     if menu.t_itemname[c] == nil and c ~= 'empty' then
                         menu[v.id].submenu[c].cursorPosY = 1
                         menu[v.id].submenu[c].moveTxt = 0
@@ -196,7 +196,7 @@ for k, v in pairs(
             else --following strings
                 if t_pos.submenu[c] == nil or c == 'empty' then
                     t_pos.submenu[c] = {}
-                    t_pos.submenu[c].title = main.f_itemnameUpper(motif[v.section]['menu_itemname_' .. main.t_sort[v.section][i]], motif[v.section].menu_title_uppercase == 1)
+                    t_pos.submenu[c].title = main:f_itemnameUpper(motif[v.section]['menu_itemname_' .. main.t_sort[v.section][i]], motif[v.section].menu_title_uppercase == 1)
                     if menu.t_itemname[c] == nil and c ~= 'empty' then
                         t_pos.submenu[c].cursorPosY = 1
                         t_pos.submenu[c].moveTxt = 0
@@ -214,21 +214,21 @@ for k, v in pairs(
             lastNum = j
         end
     end
-    if main.debugLog then main.f_printTable(menu[v.id], 'debug/t_' .. v.id .. 'Menu.txt') end
+    if main.debugLog then main:f_printTable(menu[v.id], 'debug/t_' .. v.id .. 'Menu.txt') end
 end
 
 function menu.init()
     esc(false)
     togglePause(true)
     main.escMenu = true
-    main.f_bgReset(motif.optionbgdef.bg)
+    main:f_bgReset(motif.optionbgdef.bg)
     if gamemode('training') then
         sndPlay(motif.files.snd_data, motif.training_info.enter_snd[1], motif.training_info.enter_snd[2])
-        main.f_bgReset(motif.trainingbgdef.bg)
+        main:f_bgReset(motif.trainingbgdef.bg)
         menu.currentMenu = {menu.training.loop, menu.training.loop}
     else
         sndPlay(motif.files.snd_data, motif.menu_info.enter_snd[1], motif.menu_info.enter_snd[2])
-        main.f_bgReset(motif.menubgdef.bg)
+        main:f_bgReset(motif.menubgdef.bg)
         --menu.menu.cursorPosY = 1
         --menu.menu.moveTxt = 0
         --menu.menu.item = 1
@@ -315,8 +315,8 @@ function menu.commandlistParse()
                 if main.t_selChars[sel.ref + 1].commandlist == nil then
                     local movelist = getCharMovelist(sel.ref)
                     if movelist ~= '' then
-                        for k, v in main.f_sortKeys(motif.glyphs, function(t, a, b) return string.len(a) > string.len(b) end) do
-                            movelist = movelist:gsub(main.f_escapePattern(k), '<' .. numberToRune(v[1] + 0xe000) .. '>')
+                        for k, v in main:f_sortKeys(motif.glyphs, function(t, a, b) return string.len(a) > string.len(b) end) do
+                            movelist = movelist:gsub(main:f_escapePattern(k), '<' .. numberToRune(v[1] + 0xe000) .. '>')
                         end
                         local t = {}
                         local col = {}
@@ -359,7 +359,7 @@ function menu.commandlistParse()
     if menu.movelistChar > #menu.t_movelists then
         menu.movelistChar = 1
     end
-    if main.debugLog then main.f_printTable(menu.t_movelists, "debug/t_movelists.txt") end
+    if main.debugLog then main:f_printTable(menu.t_movelists, "debug/t_movelists.txt") end
 end
 
 for _, v in ipairs({'menu_info', 'training_info'}) do
@@ -413,40 +413,40 @@ for _, v in ipairs({'menu_info', 'training_info'}) do
 end
 
 function menu.commandlistRender(section, t)
-    main.f_cmdInput()
+    main:f_cmdInput()
     local cmdList = {}
     if t ~= nil and t.commandlist ~= nil then
         cmdList = t.commandlist
     else
         table.insert(cmdList, {{glyph = false, text = motif[section].movelist_text_text, align = 1, col = {}}})
     end
-    if esc() or main.f_input(main.t_players, {'m'}) then
+    if esc() or main:f_input(main.t_players, {'m'}) then
         sndPlay(motif.files.snd_data, motif[section].cancel_snd[1], motif[section].cancel_snd[2])
         menu.itemname = ''
         return
-    elseif main.f_input(main.t_players, {'pal', 's'}) then
+    elseif main:f_input(main.t_players, {'pal', 's'}) then
         sndPlay(motif.files.snd_data, motif[section].cursor_done_snd[1], motif[section].cursor_done_snd[2])
         menu.itemname = ''
         togglePause(false)
         main.escMenu = false
         menu.currentMenu[1] = menu.currentMenu[2]
         return
-    elseif main.f_input(main.t_players, {'$B'}) and #menu.t_movelists > 1 then
+    elseif main:f_input(main.t_players, {'$B'}) and #menu.t_movelists > 1 then
         sndPlay(motif.files.snd_data, motif[section].cursor_move_snd[1], motif[section].cursor_move_snd[2])
         menu.movelistChar = menu.movelistChar - 1
         if menu.movelistChar < 1 then
             menu.movelistChar = #menu.t_movelists
         end
-    elseif main.f_input(main.t_players, {'$F'}) and #menu.t_movelists > 1 then
+    elseif main:f_input(main.t_players, {'$F'}) and #menu.t_movelists > 1 then
         sndPlay(motif.files.snd_data, motif[section].cursor_move_snd[1], motif[section].cursor_move_snd[2])
         menu.movelistChar = menu.movelistChar + 1
         if menu.movelistChar > #menu.t_movelists then
             menu.movelistChar = 1
         end
-    elseif main.f_input(main.t_players, {'$U'}) and t.tbl.movelistLine > 1 then
+    elseif main:f_input(main.t_players, {'$U'}) and t.tbl.movelistLine > 1 then
         sndPlay(motif.files.snd_data, motif[section].cursor_move_snd[1], motif[section].cursor_move_snd[2])
         t.tbl.movelistLine = t.tbl.movelistLine - 1
-    elseif main.f_input(main.t_players, {'$D'}) and t.tbl.movelistLine <= #cmdList - motif[section].movelist_window_visibleitems then
+    elseif main:f_input(main.t_players, {'$D'}) and t.tbl.movelistLine <= #cmdList - motif[section].movelist_window_visibleitems then
         sndPlay(motif.files.snd_data, motif[section].cursor_move_snd[1], motif[section].cursor_move_snd[2])
         t.tbl.movelistLine = t.tbl.movelistLine + 1
     end
@@ -500,7 +500,7 @@ function menu.commandlistRender(section, t)
                     if v.align == -1 then
                         alignOffset = alignOffset - motif.glyphs_data[v.text].info.Size[1] * scaleX
                     end
-                    if motif.defaultMenu then main.f_disableLuaScale() end
+                    if motif.defaultMenu then main:f_disableLuaScale() end
                     animSetScale(motif.glyphs_data[v.text].anim, scaleX, scaleY)
                     animSetPos(
                             motif.glyphs_data[v.text].anim,
@@ -516,7 +516,7 @@ function menu.commandlistRender(section, t)
                     )
                     --animUpdate(motif.glyphs_data[v.text].anim)
                     animDraw(motif.glyphs_data[v.text].anim)
-                    if motif.defaultMenu then main.f_setLuaScale() end
+                    if motif.defaultMenu then main:f_setLuaScale() end
                     if k < #cmdList[n] then
                         width = motif.glyphs_data[v.text].info.Size[1] * scaleX + motif[section].movelist_glyphs_spacing[1]
                     end

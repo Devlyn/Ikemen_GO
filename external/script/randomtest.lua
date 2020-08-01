@@ -66,7 +66,7 @@ function randomtest.rakuBenry()
   local fp = io.open(alf, 'r')
   if fp then
     for line in fp:lines() do
-      local tmp = main.f_strsplit(',', line)
+      local tmp = main:f_strsplit(',', line)
       if #tmp >= 2 then
         for i = 1, 4 do
           if i == 4 then
@@ -75,7 +75,7 @@ function randomtest.rakuBenry()
             if string.byte(tmp[1], i) ~= string.byte(buf, i) then break end
           end
         end
-        winct[tmp[1]] = randomtest.map(tonumber, main.f_strsplit(' ', randomtest.strtrim(tmp[2])))
+        winct[tmp[1]] = randomtest.map(tonumber, main:f_strsplit(' ', randomtest.strtrim(tmp[2])))
       end
     end
     io.close(fp)

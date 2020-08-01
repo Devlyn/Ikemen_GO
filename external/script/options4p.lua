@@ -89,7 +89,7 @@ function options.f_keyDefault()
 end
 
 options.t_itemname ['keyboardp1p2'] = function(cursorPosY, moveTxt, item, t)
-    if main.f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F1']] then
+    if main:f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F1']] then
         sndPlay(motif.files.snd_data, motif.option_info.cursor_move_snd[1], motif.option_info.cursor_move_snd[2])
         options.f_keyCfgInit('KeyConfig', t.submenu[t.items[item].itemname].title)
         while true do
@@ -102,7 +102,7 @@ options.t_itemname ['keyboardp1p2'] = function(cursorPosY, moveTxt, item, t)
 end
 
 options.t_itemname ['gamepadp1p2'] = function(cursorPosY, moveTxt, item, t)
-    if main.f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F2']] then
+    if main:f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F2']] then
         sndPlay(motif.files.snd_data, motif.option_info.cursor_move_snd[1], motif.option_info.cursor_move_snd[2])
         if main.flags['-nojoy'] == nil then
             options.f_keyCfgInit('JoystickConfig', t.submenu[t.items[item].itemname].title)
@@ -117,7 +117,7 @@ options.t_itemname ['gamepadp1p2'] = function(cursorPosY, moveTxt, item, t)
 end
 
 options.t_itemname ['keyboardp3p4'] = function(cursorPosY, moveTxt, item, t)
-    if main.f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F1']] then
+    if main:f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F1']] then
         sndPlay(motif.files.snd_data, motif.option_info.cursor_move_snd[1], motif.option_info.cursor_move_snd[2])
         options.f_keyCfgInit4p('KeyConfig', t.submenu[t.items[item].itemname].title)
         while true do
@@ -130,7 +130,7 @@ options.t_itemname ['keyboardp3p4'] = function(cursorPosY, moveTxt, item, t)
 end
 
 options.t_itemname ['gamepadp3p4'] = function(cursorPosY, moveTxt, item, t)
-    if main.f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F2']] then
+    if main:f_input(main.t_players, {'pal', 's'}) --[[or getKey() == 'F2']] then
         sndPlay(motif.files.snd_data, motif.option_info.cursor_move_snd[1], motif.option_info.cursor_move_snd[2])
         if main.flags['-nojoy'] == nil then
             options.f_keyCfgInit4p('JoystickConfig', t.submenu[t.items[item].itemname].title)
@@ -208,7 +208,7 @@ end
 
 function options.f_keyCfgInit4p(cfgType, title)
     resetKey()
-    main.f_cmdInput()
+    main:f_cmdInput()
     cursorPosY = 2
     item = 2
     item_start = 2
@@ -216,7 +216,7 @@ function options.f_keyCfgInit4p(cfgType, title)
     configall = false
     key = ''
     t_conflict = {}
-    t_savedConfig = main.f_tableCopy(config[cfgType])
+    t_savedConfig = main:f_tableCopy(config[cfgType])
     btnReleased = false
     player = 3
     btn = tostring(config[cfgType][player].Buttons[item - item_start])
@@ -230,10 +230,10 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
     --Config all
     if configall then
         --esc (reset mapping)
-        if esc() --[[or main.f_input(main.t_players, {'m'})]] then
+        if esc() --[[or main:f_input(main.t_players, {'m'})]] then
             sndPlay(motif.files.snd_data, motif.option_info.cancel_snd[1], motif.option_info.cancel_snd[2])
             esc(false)
-            config[cfgType][player] = main.f_tableCopy(t_savedConfig[player])
+            config[cfgType][player] = main:f_tableCopy(t_savedConfig[player])
             for pn = 1, #config[cfgType] do
                 setKeyConfig(pn, config[cfgType][pn].Joystick, config[cfgType][pn].Buttons)
             end
@@ -322,7 +322,7 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
         end
         resetKey()
         --move left / right
-    elseif main.f_input(main.t_players, {'$F', '$B'}) then
+    elseif main:f_input(main.t_players, {'$F', '$B'}) then
         sndPlay(motif.files.snd_data, motif.option_info.cursor_move_snd[1], motif.option_info.cursor_move_snd[2])
         if player == 3 then
             player = 4
@@ -331,7 +331,7 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
         end
         joyNum = config[cfgType][player].Joystick
         --move up / down
-    elseif main.f_input(main.t_players, {'$U', '$D'}) then
+    elseif main:f_input(main.t_players, {'$U', '$D'}) then
         sndPlay(motif.files.snd_data, motif.option_info.cursor_move_snd[1], motif.option_info.cursor_move_snd[2])
         if cursorPosY == item_start then
             cursorPosY = #t
@@ -343,11 +343,11 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
     end
     btn = tostring(config[cfgType][player].Buttons[item - item_start])
     if configall == false then
-        if esc() or main.f_input(main.t_players, {'m'}) or (t[item].itemname == 'back' and main.f_input(main.t_players, {'pal', 's'})) then
+        if esc() or main:f_input(main.t_players, {'m'}) or (t[item].itemname == 'back' and main:f_input(main.t_players, {'pal', 's'})) then
             if t_conflict[joyNum] then
-                if not main.f_warning(main.f_extractText(motif.warning_info.text_keys_text), motif.option_info, motif.optionbgdef) then
+                if not main:f_warning(main:f_extractText(motif.warning_info.text_keys_text), motif.option_info, motif.optionbgdef) then
                     options.txt_title:update({text = motif.option_info.title_input_text})
-                    config[cfgType] = main.f_tableCopy(t_savedConfig)
+                    config[cfgType] = main:f_tableCopy(t_savedConfig)
                     for pn = 1, #config[cfgType] do
                         setKeyConfig(pn, config[cfgType][pn].Joystick, config[cfgType][pn].Buttons)
                     end
@@ -364,7 +364,7 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
                 return false
             end
             --Config all
-        elseif (t[item].itemname == 'configall' and main.f_input(main.t_players, {'pal', 's'})) or getKey() == 'F1' or getKey() == 'F2' then
+        elseif (t[item].itemname == 'configall' and main:f_input(main.t_players, {'pal', 's'})) or getKey() == 'F1' or getKey() == 'F2' then
             sndPlay(motif.files.snd_data, motif.option_info.cursor_done_snd[1], motif.option_info.cursor_done_snd[2])
             if getKey() == 'F3' then
                 player = 3
@@ -372,7 +372,7 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
                 player = 4
             end
             if cfgType == 'JoystickConfig' and getJoystickPresent(joyNum) == false then
-                main.f_warning(main.f_extractText(motif.warning_info.text_pad_text), motif.option_info, motif.optionbgdef)
+                main:f_warning(main:f_extractText(motif.warning_info.text_pad_text), motif.option_info, motif.optionbgdef)
                 item = item_start
                 cursorPosY = item_start
             else
@@ -419,7 +419,7 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
                     t_pos[i][1] + motif.option_info.menu_key_boxcursor_coords[1],
                     t_pos[i][2] + motif.option_info.menu_key_boxcursor_coords[2],
                     motif.option_info.menu_key_boxcursor_coords[3] - motif.option_info.menu_key_boxcursor_coords[1] + 1,
-                    #t * (motif.option_info.menu_key_boxcursor_coords[4] - motif.option_info.menu_key_boxcursor_coords[2] + 1) + main.f_oddRounding(motif.option_info.menu_key_boxcursor_coords[2]),
+                    #t * (motif.option_info.menu_key_boxcursor_coords[4] - motif.option_info.menu_key_boxcursor_coords[2] + 1) + main:f_oddRounding(motif.option_info.menu_key_boxcursor_coords[2]),
                     motif.option_info.menu_boxbg_col[1],
                     motif.option_info.menu_boxbg_col[2],
                     motif.option_info.menu_boxbg_col[3],
@@ -621,7 +621,7 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
     end
     --draw menu cursor
     if motif.option_info.menu_boxcursor_visible == 1 then
-        local src, dst = main.f_boxcursorAlpha(
+        local src, dst = main:f_boxcursorAlpha(
                 motif.option_info.menu_boxcursor_alpharange[1],
                 motif.option_info.menu_boxcursor_alpharange[2],
                 motif.option_info.menu_boxcursor_alpharange[3],
@@ -635,7 +635,7 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
                         t_pos[i][1] + motif.option_info.menu_key_boxcursor_coords[1],
                         t_pos[i][2] + motif.option_info.menu_key_boxcursor_coords[2] + (cursorPosY - 1) * motif.option_info.menu_key_item_spacing[2],
                         motif.option_info.menu_key_boxcursor_coords[3] - motif.option_info.menu_key_boxcursor_coords[1] + 1,
-                        motif.option_info.menu_key_boxcursor_coords[4] - motif.option_info.menu_key_boxcursor_coords[2] + 1 + main.f_oddRounding(motif.option_info.menu_key_boxcursor_coords[2]),
+                        motif.option_info.menu_key_boxcursor_coords[4] - motif.option_info.menu_key_boxcursor_coords[2] + 1 + main:f_oddRounding(motif.option_info.menu_key_boxcursor_coords[2]),
                         motif.option_info.menu_boxcursor_col[1],
                         motif.option_info.menu_boxcursor_col[2],
                         motif.option_info.menu_boxcursor_col[3],
@@ -649,7 +649,7 @@ function options.f_keyCfg4p(cfgType, controller, bgdef, skipClear)
     end
     --draw layerno = 1 backgrounds
     bgDraw(motif[bgdef].bg, true)
-    main.f_cmdInput()
+    main:f_cmdInput()
     if not skipClear then
         refresh()
     end

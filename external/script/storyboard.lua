@@ -29,8 +29,8 @@ end
 
 local function f_play(t)
 	playBGM('')
-	main.f_cmdInput()
-	if main.debugLog then main.f_printTable(t, 'debug/t_storyboard.txt') end
+	main:f_cmdInput()
+	if main.debugLog then main:f_printTable(t, 'debug/t_storyboard.txt') end
 	--loop through scenes in order
 	for k, v in ipairs(t.sceneOrder) do
 		if k >= t.scenedef.startscene then
@@ -38,8 +38,8 @@ local function f_play(t)
 			local fadeStart = getFrameCount()
 			for i = 0, t.scene[v].end_time do
 				--end storyboard
-				if (esc() or main.f_input(main.t_players, {'pal', 's', 'm'})) and t.scenedef.skipbutton > 0 then
-					main.f_cmdInput()
+				if (esc() or main:f_input(main.t_players, {'pal', 's', 'm'})) and t.scenedef.skipbutton > 0 then
+					main:f_cmdInput()
 					return
 				end
 				--play bgm
@@ -48,7 +48,7 @@ local function f_play(t)
 				end
 				--play snd
 				if t.scenedef.snd_data ~= nil then
-					for k2, v2 in main.f_sortKeys(t.scene[v].sound) do
+					for k2, v2 in main:f_sortKeys(t.scene[v].sound) do
 						if i == v2.starttime then
 							sndPlay(t.scenedef.snd_data, v2.value[1], v2.value[2])
 						end
@@ -61,7 +61,7 @@ local function f_play(t)
 					bgDraw(t.scene[v].bg, false)
 				end
 				--loop through layers in order
-				for k2, v2 in main.f_sortKeys(t.scene[v].layer) do
+				for k2, v2 in main:f_sortKeys(t.scene[v].layer) do
 					if i >= t.scene[v].layer[k2].starttime and i <= t.scene[v].layer[k2].endtime then
 						--layer anim
 						if t.scene[v].layer[k2].anim_data ~= nil then
@@ -71,7 +71,7 @@ local function f_play(t)
 						--layer text
 						if t.scene[v].layer[k2].text_data ~= nil then
 							t.scene[v].layer[k2].counter = t.scene[v].layer[k2].counter + 1
-							main.f_textRender(
+							main:f_textRender(
 									t.scene[v].layer[k2].text_data,
 									t.scene[v].layer[k2].text,
 									t.scene[v].layer[k2].counter,
@@ -79,7 +79,7 @@ local function f_play(t)
 									(t.scene[v].layerall_pos[2] + t.scene[v].layer[k2].offset[2]) * 240 / t.info.localcoord[2],
 									main.font_def[t.scene[v].layer[k2].font[1] .. t.scene[v].layer[k2].font_height],
 									t.scene[v].layer[k2].textdelay,
-									main.f_lineLength(
+									main:f_lineLength(
 											(t.scene[v].layerall_pos[1] + t.scene[v].layer[k2].offset[1]) * 320 / t.info.localcoord[1],
 											t.info.localcoord[1],
 											t.scene[v].layer[k2].font[3],
@@ -107,7 +107,7 @@ local function f_play(t)
 						t.scene[v][fadeType .. '_col'][2],
 						t.scene[v][fadeType .. '_col'][3]
 				)
-				main.f_cmdInput()
+				main:f_cmdInput()
 				refresh()
 			end
 		end
@@ -196,7 +196,7 @@ local function f_parse(path)
 					end
 					local num = tonumber(param:match('font([0-9]+)'))
 					if param:match('_height$') then
-						pos.font_height[num] = main.f_dataType(value)
+						pos.font_height[num] = main:f_dataType(value)
 					else
 						value = value:gsub('\\', '/')
 						pos.font[num] = tostring(value)
@@ -225,7 +225,7 @@ local function f_parse(path)
 								offset = {0, 0},
 								starttime = 0,
 								--endtime = 0,
-								counter = 0, --used internally by main.f_textRender
+								counter = 0, --used internally by main:f_textRender
 							}
 						end
 						pos_val = pos.layer[num]
@@ -256,7 +256,7 @@ local function f_parse(path)
 						if param:match('^text$') then --skip commas detection for strings
 							pos_val[param] = value
 						elseif value:match('.+,.+') then --multiple values
-							for i, c in ipairs(main.f_strsplit(',', value)) do --split value using "," delimiter
+							for i, c in ipairs(main:f_strsplit(',', value)) do --split value using "," delimiter
 								if i == 1 then
 									--t_layer[k2].font
 									pos_val[param] = {}
@@ -274,11 +274,11 @@ local function f_parse(path)
 								if c == nil or c == '' then
 									table.insert(pos_val[param], 0)
 								else
-									table.insert(pos_val[param], main.f_dataType(c))
+									table.insert(pos_val[param], main:f_dataType(c))
 								end
 							end
 						else --single value
-							pos_val[param] = main.f_dataType(value)
+							pos_val[param] = main:f_dataType(value)
 						end
 					end
 				end
@@ -298,12 +298,12 @@ local function f_parse(path)
 	--; FIX REFERENCES, LOAD DATA
 	--;===========================================================
 	--merge tables
-	t = main.f_tableMerge(t_default, t)
+	t = main:f_tableMerge(t_default, t)
 	--scenedef spr
 	if not t.scenedef.spr:match('^data/') then
-		if main.f_fileExists(t.fileDir .. t.scenedef.spr) then
+		if main:f_fileExists(t.fileDir .. t.scenedef.spr) then
 			t.scenedef.spr = t.fileDir .. t.scenedef.spr
-		elseif main.f_fileExists('data/' .. t.scenedef.spr) then
+		elseif main:f_fileExists('data/' .. t.scenedef.spr) then
 			t.scenedef.spr = 'data/' .. t.scenedef.spr
 		end
 	end
@@ -311,9 +311,9 @@ local function f_parse(path)
 	--scenedef snd
 	if t.scenedef.snd ~= '' then
 		if not t.scenedef.snd:match('^data/') then
-			if main.f_fileExists(t.fileDir .. t.scenedef.snd) then
+			if main:f_fileExists(t.fileDir .. t.scenedef.snd) then
 				t.scenedef.snd = t.fileDir .. t.scenedef.snd
-			elseif main.f_fileExists('data/' .. t.scenedef.snd) then
+			elseif main:f_fileExists('data/' .. t.scenedef.snd) then
 				t.scenedef.snd = 'data/' .. t.scenedef.snd
 			end
 		end
@@ -321,13 +321,13 @@ local function f_parse(path)
 	end
 	--loop through scenes
 	local prev_k = ''
-	for k, v in main.f_sortKeys(t.scene) do
+	for k, v in main:f_sortKeys(t.scene) do
 		--bgm
 		if t.scene[k].bgm ~= nil then
 			if t.scene[k].bgm:match('^data/') then
-			elseif main.f_fileExists(t.fileDir .. t.scene[k].bgm) then
+			elseif main:f_fileExists(t.fileDir .. t.scene[k].bgm) then
 				t.scene[k].bgm = t.fileDir .. t.scene[k].bgm
-			elseif main.f_fileExists('music/' .. t.scene[k].bgm) then
+			elseif main:f_fileExists('music/' .. t.scene[k].bgm) then
 				t.scene[k].bgm = 'music/' .. t.scene[k].bgm
 			end
 		end
@@ -357,7 +357,7 @@ local function f_parse(path)
 		for k2, v2 in pairs(t_layer) do
 			--anim
 			if t_layer[k2].anim ~= -1 and t.anim[t_layer[k2].anim] ~= nil then
-				t.scene[k].layer[k2].anim_data = main.f_animFromTable(
+				t.scene[k].layer[k2].anim_data = main:f_animFromTable(
 						t.anim[t_layer[k2].anim],
 						t.scenedef.spr_data,
 						t.scene[k].layerall_pos[1] + t_layer[k2].offset[1],
@@ -404,7 +404,7 @@ local function f_parse(path)
 end
 
 function storyboard.f_storyboard(path)
-	main.f_disableLuaScale()
+	main:f_disableLuaScale()
 	path = path:gsub('\\', '/')
 	if storyboard.t_storyboard[path] == nil then
 		storyboard.t_storyboard[path] = f_parse(path)
@@ -412,7 +412,7 @@ function storyboard.f_storyboard(path)
 		f_reset(storyboard.t_storyboard[path])
 	end
 	f_play(storyboard.t_storyboard[path])
-	main.f_setLuaScale()
+	main:f_setLuaScale()
 end
 
 return storyboard

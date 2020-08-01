@@ -66,7 +66,7 @@ local function parseScreenPack(mainRef)
 					end
 					local num = tonumber(param:match('font([0-9]+)'))
 					if param:match('_height$') then
-						pos.font_height[num] = main.f_dataType(value)
+						pos.font_height[num] = main:f_dataType(value)
 					else
 						value = value:gsub('\\', '/')
 						pos.font[num] = tostring(value)
@@ -84,9 +84,9 @@ local function parseScreenPack(mainRef)
 						table.insert(pos_sort, param:match('_itemname_(.+)$'))
 						pos[param] = value
 					elseif value:match('.+,.+') then --multiple values
-						for i, c in ipairs(main.f_strsplit(',', value)) do --split value using "," delimiter
+						for i, c in ipairs(main:f_strsplit(',', value)) do --split value using "," delimiter
 							if param:match('_anim$') then --mugen recognizes animations even if there are more values
-								pos[param] = main.f_dataType(c)
+								pos[param] = main:f_dataType(c)
 								break
 							elseif i == 1 then
 								pos[param] = {}
@@ -104,11 +104,11 @@ local function parseScreenPack(mainRef)
 							if c == nil or c == '' then
 								table.insert(pos[param], 0)
 							else
-								table.insert(pos[param], main.f_dataType(c))
+								table.insert(pos[param], main:f_dataType(c))
 							end
 						end
 					else --single value
-						pos[param] = main.f_dataType(value)
+						pos[param] = main:f_dataType(value)
 					end
 				end
 			elseif param == nil then --only valid lines left are animations
@@ -121,13 +121,13 @@ local function parseScreenPack(mainRef)
 				end
 			end
 		end
-		main.loadingRefresh()
+		main:loadingRefresh()
 	end
 	return t
 end
 local parsedPack = parseScreenPack(main)
 --file:close()
-if main.debugLog then main.f_printTable(main.t_sort, 'debug/t_sort.txt') end
+if main.debugLog then main:f_printTable(main.t_sort, 'debug/t_sort.txt') end
 
 --;===========================================================
 --; FIX REFERENCES, LOAD DATA
@@ -160,7 +160,7 @@ local function updateTrainingInfo(motifRef, tableRef)
 	--training_info section reuses menu_info values (excluding itemnames)
 	local motif = motifRef
 	local t = tableRef
-	motif.training_info = main.f_tableMerge(motif.training_info, motif.menu_info)
+	motif.training_info = main:f_tableMerge(motif.training_info, motif.menu_info)
 	if t.menu_info == nil then t.menu_info = {} end
 	if t.training_info == nil then t.training_info = {} end
 	for k, v in pairs(t.menu_info) do
@@ -175,7 +175,7 @@ local function mergeMotifTables(motifRef, tableRef)
 	local motif = motifRef
 	local t = tableRef
 	--merge tables
-	motif = main.f_tableMerge(motif, t)
+	motif = main:f_tableMerge(motif, t)
 end
 mergeMotifTables(motifdata, parsedPack)
 
@@ -238,7 +238,7 @@ for k, v in ipairs(t_dir) do
 	end
 	if not skip then
 		for j = 1, #v.dirs do
-			if main.f_fileExists(v.dirs[j]) then
+			if main:f_fileExists(v.dirs[j]) then
 				motifdata[v.t[1]][v.t[2]] = v.dirs[j]
 				break
 			end
@@ -247,11 +247,11 @@ for k, v in ipairs(t_dir) do
 end
 
 motifdata.files.spr_data = sffNew(motifdata.files.spr)
-main.loadingRefresh()
+main:loadingRefresh()
 motifdata.files.snd_data = sndNew(motifdata.files.snd)
-main.loadingRefresh()
+main:loadingRefresh()
 motifdata.files.glyphs_data = sffNew(motifdata.files.glyphs)
-main.loadingRefresh()
+main:loadingRefresh()
 
 --data
 local anim = ''
@@ -264,21 +264,21 @@ for k, v in ipairs(t_dir) do
 		--optional sff paths and data
 		if motifdata[v].spr ~= '' then
 			if not motifdata[v].spr:match('^data/') then
-				if main.f_fileExists(motifdata.fileDir .. motifdata[v].spr) then
+				if main:f_fileExists(motifdata.fileDir .. motifdata[v].spr) then
 					motifdata[v].spr = motifdata.fileDir .. motifdata[v].spr
-				elseif main.f_fileExists('data/' .. motifdata[v].spr) then
+				elseif main:f_fileExists('data/' .. motifdata[v].spr) then
 					motifdata[v].spr = 'data/' .. motifdata[v].spr
 				end
 			end
 			motifdata[v].spr_data = sffNew(motifdata[v].spr)
-			main.loadingRefresh()
+			main:loadingRefresh()
 		else
 			motifdata[v].spr = motifdata.files.spr
 			motifdata[v].spr_data = motifdata.files.spr_data
 		end
 		--backgrounds
 		motifdata[v].bg = bgNew(motifdata[v].spr_data, motifdata.def, v:match('^(.+)def$'))
-		main.loadingRefresh()
+		main:loadingRefresh()
 	end
 end
 
@@ -308,7 +308,7 @@ local function f_loadSprData(t, t_dir)
 			animSetScale(t[v.s .. 'data'], t[v.s .. 'scale'][1], t[v.s .. 'scale'][2])
 			animUpdate(t[v.s .. 'data'])
 		elseif t[v.s .. 'anim'] ~= nil and motifdata.anim[t[v.s .. 'anim']] ~= nil then --create animation data
-			t[v.s .. 'data'] = main.f_animFromTable(
+			t[v.s .. 'data'] = main:f_animFromTable(
 					motifdata.anim[t[v.s .. 'anim']],
 					motifdata.files.spr_data,
 					t[v.s .. 'offset'][1] + v.x,
@@ -322,7 +322,7 @@ local function f_loadSprData(t, t_dir)
 			animUpdate(t[v.s .. 'data'])
 		end
 		animSetWindow(t[v.s .. 'data'], 0, 0, motifdata.info.localcoord[1], motifdata.info.localcoord[2])
-		main.loadingRefresh()
+		main:loadingRefresh()
 	end
 end
 
@@ -440,8 +440,8 @@ local t_cmdItems = {
 	motifdata.select_info.teammenu_key_accept,
 }
 for k, v in ipairs(t_cmdItems) do
-	for i, cmd in ipairs (main.f_extractKeys(v)) do
-		main.f_commandAdd(cmd)
+	for i, cmd in ipairs (main:f_extractKeys(v)) do
+		main:f_commandAdd(cmd)
 	end
 end
 
@@ -456,7 +456,7 @@ if main.t_sort.training_info == nil or #main.t_sort.training_info == 0 then
 	motifdata:setBaseTrainingInfo()
 end
 
-if main.debugLog then main.f_printTable(motifdata, "debug/t_motif.txt") end
+if main.debugLog then main:f_printTable(motifdata, "debug/t_motif.txt") end
 
 function motif.getMotifData()
 	return motifdata

@@ -134,7 +134,7 @@ function main.ParseDefFileValue(argFile, searchBlock, searchParam, isNumber)
                 if param ~= nil and value ~= nil and param == searchParam then -- param = value pattern matched
                     value = value:gsub('"', '') -- remove brackets from value
                     if value:match('.+,.+') then -- multiple values
-                        for i, c in ipairs(main.f_strsplit(',', value)) do -- split value using "," delimiter
+                        for i, c in ipairs(main:f_strsplit(',', value)) do -- split value using "," delimiter
                             if c == nil or c == '' then
                                 ret[i] = nil
                             else
